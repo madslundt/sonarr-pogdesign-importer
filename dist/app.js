@@ -51,7 +51,13 @@ class App {
             if (this.config.verbose) {
                 console.log();
             }
-            const items = yield this.lookupItems(scrapeItems);
+            let items = yield this.lookupItems(scrapeItems);
+            if (this.config.genresIgnored && this.config.genresIgnored.length) {
+                if (this.config.verbose) {
+                    console.log();
+                }
+                items = this.filterCategories(items);
+            }
             if (this.config.verbose) {
                 console.log();
             }
@@ -60,11 +66,10 @@ class App {
     }
     addSeries(items) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.config.genresIgnored && this.config.genresIgnored.length) {
-                items = this.filterCategories(items);
-            }
             for (const item of items) {
-                yield this.sonarrApi.addSeries(item);
+                if (!!this.config.test) {
+                    yield this.sonarrApi.addSeries(item);
+                }
                 console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);
             }
         });
@@ -75,9 +80,9 @@ class App {
             const itemGenres = item.genres.map(genre => genre.toLocaleLowerCase());
             const isOk = !genres.filter(genre => {
                 return itemGenres.indexOf(genre) !== -1;
-            });
+            }).length;
             if (!isOk && this.config.verbose) {
-                console.log(`${item.title} is removed from the list because the genres do not match.`);
+                console.log(`${item.title} skipped because the genres do not match.`);
             }
             return isOk;
         });

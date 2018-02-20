@@ -6,5 +6,6 @@ export interface IConfig {
     sonarrPath: string,
     genresIgnored: string[],
     minimumStars: number,
-    verbose?: boolean
+    verbose?: boolean,
+    test?: boolean
 }

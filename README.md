@@ -25,7 +25,8 @@ Create config
     "sonarrPath": "/tv/",
     "genresIgnored: ["comedy", "documentary"],
     "minimumStars": 5000,
-    "verbose": false
+    "verbose": false,
+    "test": false
 }
 ```
 
@@ -44,6 +45,8 @@ genresIgnored genres to be ignored. If a series contain one of the genres in the
 minimumStars the minimum users who has given an interest in the series. Pogdesign writes "Selected by X Users"
 
 verbose if you want to include verbose. Can be ignored.
+
+test if you want to test it without adding series to Sonarr.
 
 Run from source
 ===============
