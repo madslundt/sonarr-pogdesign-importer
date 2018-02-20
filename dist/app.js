@@ -64,9 +64,7 @@ class App {
                 items = this.filterCategories(items);
             }
             for (const item of items) {
-                const res = yield this.sonarrApi.addSeries(item);
-                const json = yield res.json();
-                console.log(json);
+                yield this.sonarrApi.addSeries(item);
                 console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);
             }
         });

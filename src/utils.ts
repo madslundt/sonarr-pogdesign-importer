@@ -9,8 +9,8 @@ const stripTrailingSlashes = (url: string) => {
 
 const isConfigValid = (config: IConfig) => {
     return config.sonarrUrl.length &&
+           config.sonarrUrl.startsWith('http') &&
            config.sonarrApi.length &&
-           config.sonarrApi.startsWith('http') &&
            config.monthsForward >= 0 &&
            config.minimumStars >= 0 &&
            config.sonarrProfileId > 0 &&

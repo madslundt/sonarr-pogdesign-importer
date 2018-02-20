@@ -15,11 +15,14 @@ const stripTrailingSlashes = (url) => {
 };
 const isConfigValid = (config) => {
     return config.sonarrUrl.length &&
+        config.sonarrUrl.startsWith('http') &&
         config.sonarrApi.length &&
         config.monthsForward >= 0 &&
         config.minimumStars >= 0 &&
         config.sonarrProfileId > 0 &&
-        config.sonarrPath.length;
+        config.sonarrPath.length &&
+        config.sonarrPath.endsWith('/') &&
+        config.sonarrPath.startsWith('/');
 };
 const getProfiles = (config) => __awaiter(this, void 0, void 0, function* () {
     const sonarrApi = new sonarrapi_1.default(config);

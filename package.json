@@ -1,6 +1,6 @@
 {
   "name": "sonarr-pogdesign-importer",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "Imports tv series from pogdesign to sonarr",
   "author": "Mads Engel Lundt <madslundt@live.dk>",
   "main": "dist/index.js",
