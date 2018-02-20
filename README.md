@@ -16,14 +16,15 @@ or
 
 Create config
 =============
+Create a config.json file some where with the following content:
 ```
 {
-    "monthsForward: 0,
-    "sonarrApi: "abcdef12345",
-    "sonarrUrl: "http://localhost:8989",
+    "monthsForward": 0,
+    "sonarrApi": "abcdef12345",
+    "sonarrUrl": "http://localhost:8989",
     "sonarrProfileId": 1,
     "sonarrPath": "/tv/",
-    "genresIgnored: ["comedy", "documentary"],
+    "genresIgnored": ["comedy", "documentary"],
     "minimumStars": 5000,
     "verbose": false,
     "test": false
