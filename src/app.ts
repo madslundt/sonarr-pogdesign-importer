@@ -63,8 +63,7 @@ class App {
         }
 
         for (const item of items) {
-            const res = await this.sonarrApi.addSeries(item);
-            const json = await res.json();
+            await this.sonarrApi.addSeries(item);
             console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);
         }
     }
