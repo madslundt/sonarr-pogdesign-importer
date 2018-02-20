@@ -31,7 +31,7 @@ Create a config.json file some where with the following content:
 }
 ```
 
-monthsForward lookups up series from dates date and X months in the future.
+monthsForward lookups up series from today's date and X months in the future.
 
 sonarrApi can be found in sonarr under Settings > General > SecuriGidety > API Key
 
