@@ -1,13 +1,28 @@
 {
-  "name": "sonarr-import",
+  "name": "sonarr-pogdesign-importer",
   "version": "0.0.1",
-  "description": "",
+  "description": "Imports tv series from pogdesign to sonarr",
+  "author": "Mads Engel Lundt <madslundt@live.dk>",
   "main": "dist/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bin": {
+    "plex-sync": "bin/sonarr-pogdesign-importer"
   },
-  "author": "Mads Engel Lundt",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madslundt/sonarr-pogdesign-importer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/madslundt/sonarr-pogdesign-importer/issues"
+  },
+  "homepage": "https://github.com/madslundt/sonarr-pogdesign-importer#readme",
   "license": "MIT",
+  "files": [
+    "bin",
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "fs": "0.0.1-security",
