@@ -28,7 +28,28 @@ class SonarrApi {
             headers: {
                 'X-Api-Key': this.apiKey
             },
+            method: 'POST',
             body: JSON.stringify(series)
+        });
+    }
+
+    getProfiles() {
+        const url: string = `${this.url}/api/profile`;
+
+        return fetch(url, {
+            headers: {
+                'X-Api-Key': this.apiKey
+            }
+        });
+    }
+
+    getPaths() {
+        const url: string = `${this.url}/api/rootfolder`;
+
+        return fetch(url, {
+            headers: {
+                'X-Api-Key': this.apiKey
+            }
         });
     }
 }

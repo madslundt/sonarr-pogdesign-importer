@@ -43,4 +43,30 @@ export interface ISeries {
     added: Date;
     ratings: IRatings;
     qualityProfileId: number;
+    stars: number;
+    rootFolderPath: string;
+}
+
+
+
+export interface Cutoff {
+    id: number;
+    name: string;
+}
+
+export interface Quality {
+    id: number;
+    name: string;
+}
+
+export interface Item {
+    quality: Quality;
+    allowed: boolean;
+}
+
+export interface IProfile {
+    name: string;
+    cutoff: Cutoff;
+    items: Item[];
+    id: number;
 }

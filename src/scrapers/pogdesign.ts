@@ -3,13 +3,10 @@ import { IConfig } from '../interfaces/config';
 import * as moment from 'moment';
 import * as cheerio from 'cheerio';
 import fetch from 'node-fetch';
-import SonarrApi from './../sonarrapi';
-import { ISeries } from "../interfaces/sonarr";
 
 
 class PogDesign implements IScraper {
     private readonly config: IConfig;
-    private readonly sonarrApi: SonarrApi;
 
     private readonly DATE_STRING: string = 'MMMM-YYYY';
     private readonly URL: string = 'https://www.pogdesign.co.uk';
@@ -21,21 +18,6 @@ class PogDesign implements IScraper {
 
     constructor(config: IConfig) {
         this.config = config;
-        this.sonarrApi = new SonarrApi(config);
-    }
-
-    private async getShowInfo(title: string): Promise<ISeries | null> {
-        const res = await this.sonarrApi.lookupSeries(title);
-        const info: ISeries[] = await res.json();
-
-        const thisYear = parseInt(moment().format('YYYY'));
-        for (const i of info) {
-            if (i.year >= thisYear) {
-                return i;
-            }
-        }
-
-        return null;
     }
 
     private extractSelectedCount(text: string): number {
@@ -57,18 +39,12 @@ class PogDesign implements IScraper {
         const selectedCount = this.extractSelectedCount(selectedText);
 
         if (selectedCount > this.config.minimumStars) {
-            const info = await this.getShowInfo(title);
-            if (info) {
-                const result: IItem = {
-                    title: title,
-                    stars: selectedCount,
-                    sonarrInfo: info
-                };
+            const result: IItem = {
+                title: title,
+                stars: selectedCount
+            };
 
-                return result;
-            } else {
-                console.log(`Could not find ${title}`);
-            }
+            return result;
         } else if (this.config.verbose) {
             console.log(`${title} skipped because it only has ${selectedCount} stars`);
         }
