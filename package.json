@@ -1,0 +1,25 @@
+{
+  "name": "sonarr-import",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mads Engel Lundt",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "fs": "0.0.1-security",
+    "minimist": "^1.2.0",
+    "moment": "^2.20.1",
+    "node-fetch": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.7",
+    "@types/minimist": "^1.2.0",
+    "@types/moment": "^2.13.0",
+    "@types/node": "^9.4.6",
+    "@types/node-fetch": "^1.6.7"
+  }
+}
