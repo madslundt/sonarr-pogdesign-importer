@@ -31,23 +31,23 @@ Create a config.json file some where with the following content:
 }
 ```
 
-monthsForward lookups up series from today's date and X months in the future.
+**monthsForward** lookups up series from today's date and X months in the future.
 
-sonarrApi can be found in sonarr under Settings > General > SecuriGidety > API Key
+**sonarrApi** can be found in sonarr under Settings > General > SecuriGidety > API Key
 
-sonarrUrl your url to sonarr
+**sonarrUrl** your url to sonarr
 
-sonarrProfileId the profile id in Sonarr. Must be greater than 0. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --profiles` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --profiles`.
+**sonarrProfileId** the profile id in Sonarr. Must be greater than 0. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --profiles` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --profiles`.
 
-sonarrPath where Sonarr should store the series. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --paths` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --paths`.
+**sonarrPath** where Sonarr should store the series. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --paths` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --paths`.
 
-genresIgnored genres to be ignored. If a series contain one of the genres in the list it is not imported to Sonarr.
+**genresIgnored** genres to be ignored. If a series contain one of the genres in the list it is not imported to Sonarr.
 
-minimumStars the minimum users who has given an interest in the series. Pogdesign writes "Selected by X Users"
+**minimumStars** the minimum users who has given an interest in the series. Pogdesign writes "Selected by X Users"
 
-verbose if you want to include verbose. Can be ignored.
+**verbose** if you want to include verbose. Can be ignored.
 
-test if you want to test it without adding series to Sonarr.
+**test** if you want to test it without adding series to Sonarr. Can be ignored
 
 Run from source
 ===============
