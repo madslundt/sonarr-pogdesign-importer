@@ -10,10 +10,13 @@ const stripTrailingSlashes = (url: string) => {
 const isConfigValid = (config: IConfig) => {
     return config.sonarrUrl.length &&
            config.sonarrApi.length &&
+           config.sonarrApi.startsWith('http') &&
            config.monthsForward >= 0 &&
            config.minimumStars >= 0 &&
            config.sonarrProfileId > 0 &&
-           config.sonarrPath.length;
+           config.sonarrPath.length &&
+           config.sonarrPath.endsWith('/') &&
+           config.sonarrPath.startsWith('/');
 }
 
 const getProfiles = async (config: IConfig) => {
