@@ -59,3 +59,4 @@ typings/
 
 .DS_STORE
 config.json
+node_modules/
