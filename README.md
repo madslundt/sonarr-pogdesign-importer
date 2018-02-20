@@ -53,4 +53,5 @@ Run from source
 ===============
 1. Clone this repository.
 2. Create config.json file
-3. Go to /dist and run `node index.js --config="[CONFIG PATH]"` or `node index.js -c "[CONFIG PATH]"`
+3. Change files in /src and transpile them to js by using the command `tsc` (you need to have tsc installed globally `npm i -g tsc`)
+4. Go to /dist and run `node index --config="[CONFIG PATH]"` or `node index -c "[CONFIG PATH]"`
