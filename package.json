@@ -1,11 +1,11 @@
 {
   "name": "sonarr-pogdesign-importer",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Imports tv series from pogdesign to sonarr",
   "author": "Mads Engel Lundt <madslundt@live.dk>",
   "main": "dist/index.js",
   "bin": {
-    "plex-sync": "bin/sonarr-pogdesign-importer"
+    "sonarr-pogdesign-importer": "bin/sonarr-pogdesign-importer"
   },
   "repository": {
     "type": "git",
