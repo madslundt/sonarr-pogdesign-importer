@@ -1,3 +1,7 @@
+About
+====
+Import tv series from pogdesign into Sonarr.
+
 Install
 =======
 `npm i -g sonarr-pogdesign-importer`
