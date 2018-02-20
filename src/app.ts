@@ -31,9 +31,12 @@ class App {
     }
 
     private filterCategories(items: IItem[]) {
+        const genres = this.config.genresIgnored.map(genre => genre.toLocaleLowerCase());
+
         return items.filter(item => {
-            const isOk = !this.config.genresIgnored.filter(genre => {
-                return item.sonarrInfo.genres.indexOf(genre) !== -1;
+            const itemGenres = item.sonarrInfo.genres.map(genre => genre.toLocaleLowerCase());
+            const isOk = !genres.filter(genre => {
+                return itemGenres.indexOf(genre) !== -1;
             });
 
             if (!isOk && this.config.verbose) {

@@ -17,7 +17,6 @@ class PogDesign implements IScraper {
     private readonly SHOW_CLASS: string = 'contbox prembox removed';
     private readonly TITLE_SELECTOR: string = 'h2';
     private readonly SELECTED_SELECTOR: string = '.hil.selby';
-    // private readonly SHOW_LINK_SELECTOR: string = 'a';
     private readonly SELECTED_REGEX: RegExp = /.+?(\d+).+/g;
 
     constructor(config: IConfig) {
