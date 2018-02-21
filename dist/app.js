@@ -68,7 +68,7 @@ class App {
     addSeries(items) {
         return __awaiter(this, void 0, void 0, function* () {
             for (const item of items) {
-                if (!!this.config.test) {
+                if (!this.config.test) {
                     yield this.sonarrApi.addSeries(item);
                 }
                 console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);

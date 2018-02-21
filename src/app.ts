@@ -65,7 +65,7 @@ class App {
 
     private async addSeries(items: ISeries[]) {
         for (const item of items) {
-            if (!!this.config.test) {
+            if (!this.config.test) {
                 await this.sonarrApi.addSeries(item);
             }
             console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);
