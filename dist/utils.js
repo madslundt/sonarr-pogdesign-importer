@@ -14,40 +14,37 @@ const stripTrailingSlashes = (url) => {
     return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 const isConfigValid = (config) => {
-    if (!config.sonarrUrl.length) {
+    if (!config.sonarr.url.length) {
         console.log('sonarrUrl has to be defined');
         return false;
     }
-    if (!config.sonarrApi.length) {
+    if (!config.sonarr.apiKey.length) {
         console.log('sonarrApi has to be defined');
         return false;
     }
-    if (!config.sonarrPath.length) {
+    if (!config.sonarr.path.length) {
         console.log('sonarrPath has to be defined');
+        return false;
+    }
+    if (config.sonarr.profileId <= 0) {
+        console.log('sonarrProfileId has to be greater or equal to 1');
+        return false;
+    }
+    if (!config.sonarr.path.endsWith('/')) {
+        console.log('sonarrPath has to end with \'/\'');
+        return false;
+    }
+    if (config.sonarr.useSeasonFolder === undefined) {
+        console.log('sonarrUseSeasonFolder has to be defined');
         return false;
     }
     if (!config.genresIgnored) {
         console.log('genresIgnored has to be defined');
         return false;
     }
-    if (config.monthsForward < 0) {
-        console.log('monthsForwards has to be greater or equal to 0');
-        return false;
-    }
-    if (config.minimumStars < 0) {
-        console.log('minimumStars has to be greater or equal to 0');
-        return false;
-    }
-    if (config.sonarrProfileId <= 0) {
-        console.log('sonarrProfileId has to be greater or equal to 1');
-        return false;
-    }
-    if (!config.sonarrPath.endsWith('/')) {
-        console.log('sonarrPath has to end with \'/\'');
-        return false;
-    }
-    if (config.sonarrUseSeasonFolder === undefined) {
-        console.log('sonarrUseSeasonFolder has to be defined');
+    const scrapers = config.scrapers.some(scraper => scraper.type.toLocaleLowerCase() === 'pogdesign' || scraper.type.toLocaleLowerCase() === 'trakt');
+    if (!scrapers) {
+        console.log('No scrapers specified');
         return false;
     }
     return true;
@@ -92,7 +89,7 @@ const loadConfig = (args) => __awaiter(this, void 0, void 0, function* () {
         process.exit(1);
     }
     const result = JSON.parse(fileContent);
-    result.sonarrUrl = stripTrailingSlashes(result.sonarrUrl);
+    result.sonarr.url = stripTrailingSlashes(result.sonarr.url);
     if (args.profiles) {
         yield getProfiles(result);
         process.exit(0);

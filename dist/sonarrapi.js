@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = require("node-fetch");
 class SonarrApi {
     constructor(config) {
-        this.url = config.sonarrUrl;
-        this.apiKey = config.sonarrApi;
+        this.url = config.sonarr.url;
+        this.apiKey = config.sonarr.apiKey;
     }
     lookupSeries(term) {
         const url = `${this.url}/api/series/lookup?term=${term}`;

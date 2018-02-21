@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pogdesign_1 = require("./scrapers/pogdesign");
 const sonarrapi_1 = require("./sonarrapi");
 const moment = require("moment");
+const trakt_1 = require("./scrapers/trakt");
 class App {
     constructor(config) {
         this.config = config;
@@ -18,12 +19,39 @@ class App {
     }
     scrape() {
         return __awaiter(this, void 0, void 0, function* () {
-            const start = new Date();
-            let end = new Date();
-            end.setMonth(start.getMonth() + this.config.monthsForward);
-            const pogDesign = new pogdesign_1.default(this.config);
-            const items = yield pogDesign.process(start, end);
-            return items;
+            let result = [];
+            for (const scraper of this.config.scrapers) {
+                try {
+                    console.log(`${scraper.type} started`);
+                    console.log();
+                    const items = yield this.getItems(scraper);
+                    if (items && items.length) {
+                        result = result.concat(items);
+                    }
+                    console.log();
+                    console.log(`${scraper.type} finished successfully with ${items.length} item(s)`);
+                }
+                catch (exception) {
+                    console.log(`Skipping... ${exception}`);
+                }
+                console.log();
+                console.log();
+            }
+            return result;
+        });
+    }
+    getItems(scraper) {
+        return __awaiter(this, void 0, void 0, function* () {
+            switch (scraper.type.toLocaleLowerCase()) {
+                case 'trakt':
+                    const trakt = new trakt_1.default(scraper, this.config.verbose);
+                    return trakt.process();
+                case 'pogdesign':
+                    const pogdesign = new pogdesign_1.default(scraper, this.config.verbose);
+                    return pogdesign.process();
+                default:
+                    throw `'${scraper.type}' is not a valid type`;
+            }
         });
     }
     lookupItems(items) {
@@ -38,11 +66,10 @@ class App {
                 const series = yield res.json();
                 const thisYear = parseInt(moment().format('YYYY'));
                 for (const serie of series) {
-                    if (serie.year >= thisYear) {
-                        serie.stars = item.stars;
-                        serie.profileId = this.config.sonarrProfileId;
-                        serie.rootFolderPath = this.config.sonarrPath;
-                        serie.seasonFolder = this.config.sonarrUseSeasonFolder;
+                    if ((item.tvdbid === serie.tvdbId) || (!item.tvdbid && serie.year >= thisYear)) {
+                        serie.profileId = this.config.sonarr.profileId;
+                        serie.rootFolderPath = this.config.sonarr.path;
+                        serie.seasonFolder = this.config.sonarr.useSeasonFolder;
                         result.push(serie);
                     }
                 }
@@ -53,9 +80,6 @@ class App {
     process() {
         return __awaiter(this, void 0, void 0, function* () {
             const scrapeItems = yield this.scrape();
-            if (this.config.verbose) {
-                console.log();
-            }
             let items = yield this.lookupItems(scrapeItems);
             if (this.config.genresIgnored && this.config.genresIgnored.length) {
                 if (this.config.verbose) {
@@ -71,11 +95,22 @@ class App {
     }
     addSeries(items) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(`${items.length} series ready to be imported to Sonarr:`);
+            let alreadyAdded = 0;
+            let notAdded = 0;
             for (const item of items) {
                 if (!this.config.test) {
                     const res = yield this.sonarrApi.addSeries(item);
                     if (!res.ok) {
-                        console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
+                        if (res.status === 400) {
+                            alreadyAdded++;
+                        }
+                        else {
+                            notAdded++;
+                        }
+                        if (this.config.verbose || res.status !== 400) {
+                            console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
+                        }
                         continue;
                     }
                     const json = yield res.json();
@@ -83,7 +118,13 @@ class App {
                         console.log(JSON.stringify(json, null, 2));
                     }
                 }
-                console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);
+                console.log(`\t${item.title}`);
+            }
+            if (alreadyAdded) {
+                console.log(`${alreadyAdded} series was already added`);
+            }
+            if (notAdded) {
+                console.log(`${notAdded} series failed to be added`);
             }
         });
     }

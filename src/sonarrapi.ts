@@ -7,8 +7,8 @@ class SonarrApi {
     private readonly apiKey: string;
     private readonly url: string;
     constructor(config: IConfig) {
-        this.url = config.sonarrUrl;
-        this.apiKey = config.sonarrApi;
+        this.url = config.sonarr.url;
+        this.apiKey = config.sonarr.apiKey;
     }
 
     lookupSeries(term: string) {

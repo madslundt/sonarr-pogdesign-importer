@@ -12,7 +12,7 @@ const moment = require("moment");
 const cheerio = require("cheerio");
 const node_fetch_1 = require("node-fetch");
 class PogDesign {
-    constructor(config) {
+    constructor(config, verbose = false) {
         this.DATE_STRING = 'MMMM-YYYY';
         this.URL = 'https://www.pogdesign.co.uk';
         this.SELECTOR = '#data>.pgwidth';
@@ -21,6 +21,16 @@ class PogDesign {
         this.SELECTED_SELECTOR = '.hil.selby';
         this.SELECTED_REGEX = /.+?(\d+).+/g;
         this.config = config;
+        this.verbose = verbose;
+        this.validateConfig(config);
+    }
+    validateConfig(config) {
+        if (config.minimumStars < 0) {
+            throw 'minimumStars has to be greater or equal to 0';
+        }
+        if (config.monthsForward < 0) {
+            throw 'monthsforward has to be greater or equal to 0';
+        }
     }
     extractSelectedCount(text) {
         let count = 3;
@@ -39,12 +49,11 @@ class PogDesign {
             const selectedCount = this.extractSelectedCount(selectedText);
             if (selectedCount > this.config.minimumStars) {
                 const result = {
-                    title: title,
-                    stars: selectedCount
+                    title: title
                 };
                 return result;
             }
-            else if (this.config.verbose) {
+            else if (this.verbose) {
                 console.log(`${title} skipped because it only has ${selectedCount} stars`);
             }
             return null;
@@ -75,19 +84,20 @@ class PogDesign {
     }
     scrapeUrl(url) {
         return __awaiter(this, void 0, void 0, function* () {
-            let items = [];
             const res = yield node_fetch_1.default(url);
+            if (!res.ok) {
+                console.log(`Error scraping url: ${url}`);
+            }
             const text = yield res.text();
-            items = yield this.getItems(text);
+            const items = yield this.getItems(text);
             return items;
         });
     }
-    process(fromDate, toDate) {
+    process() {
         return __awaiter(this, void 0, void 0, function* () {
-            const months = toDate.getMonth() - fromDate.getMonth();
-            let date = fromDate;
+            let date = new Date();
             let result = [];
-            for (let i = 0; i <= months; i++) {
+            for (let i = 0; i <= this.config.monthsForward; i++) {
                 const url = this.getUrl(date);
                 const items = yield this.scrapeUrl(url);
                 result = result.concat(items);

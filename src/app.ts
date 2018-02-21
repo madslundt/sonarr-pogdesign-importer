@@ -1,9 +1,10 @@
-import { IConfig } from './interfaces/config';
+import { IConfig, IScraper } from './interfaces/config';
 import PogDesign from './scrapers/pogdesign';
 import { IItem } from './interfaces/scraper';
 import { ISeries } from './interfaces/sonarr';
 import SonarrApi from './sonarrapi';
 import * as moment from 'moment';
+import Trakt from './scrapers/trakt';
 
 class App {
     private readonly config: IConfig;
@@ -15,14 +16,39 @@ class App {
     }
 
     private async scrape() {
-        const start = new Date();
-        let end   = new Date();
-        end.setMonth(start.getMonth() + this.config.monthsForward);
+        let result: IItem[] = [];
 
-        const pogDesign = new PogDesign(this.config);
-        const items = await pogDesign.process(start, end);
+        for (const scraper of this.config.scrapers) {
+            try {
+                console.log(`${scraper.type} started`);
+                console.log();
+                const items = await this.getItems(scraper);
+                if (items && items.length) {
+                    result = result.concat(items);
+                }
+                console.log();
+                console.log(`${scraper.type} finished successfully with ${items.length} item(s)`);
+            } catch (exception) {
+                console.log(`Skipping... ${exception}`);
+            }
+            console.log();
+            console.log();
+        }
 
-        return items;
+        return result;
+    }
+
+    private async getItems(scraper: IScraper) {
+        switch (scraper.type.toLocaleLowerCase()) {
+            case 'trakt':
+                const trakt = new Trakt(scraper, this.config.verbose);
+                return trakt.process();
+            case 'pogdesign':
+                const pogdesign = new PogDesign(scraper, this.config.verbose);
+                return pogdesign.process();
+            default:
+                throw `'${scraper.type}' is not a valid type`;
+        }
     }
 
     private async lookupItems(items: IItem[]) {
@@ -39,11 +65,11 @@ class App {
 
             const thisYear = parseInt(moment().format('YYYY'));
             for (const serie of series) {
-                if (serie.year >= thisYear) {
-                    serie.stars = item.stars;
-                    serie.profileId = this.config.sonarrProfileId;
-                    serie.rootFolderPath = this.config.sonarrPath;
-                    serie.seasonFolder = this.config.sonarrUseSeasonFolder;
+                if ((item.tvdbid === serie.tvdbId) || (!item.tvdbid && serie.year >= thisYear)) {
+                    serie.profileId = this.config.sonarr.profileId;
+                    serie.rootFolderPath = this.config.sonarr.path;
+                    serie.seasonFolder = this.config.sonarr.useSeasonFolder;
+
                     result.push(serie);
                 }
             }
@@ -55,7 +81,6 @@ class App {
     async process() {
         const scrapeItems = await this.scrape();
 
-        if (this.config.verbose) { console.log(); }
         let items = await this.lookupItems(scrapeItems);
 
         if (this.config.genresIgnored && this.config.genresIgnored.length) {
@@ -69,11 +94,21 @@ class App {
     }
 
     private async addSeries(items: ISeries[]) {
+        console.log(`${items.length} series ready to be imported to Sonarr:`);
+        let alreadyAdded: number = 0;
+        let notAdded: number = 0;
         for (const item of items) {
             if (!this.config.test) {
                 const res = await this.sonarrApi.addSeries(item);
                 if (!res.ok) {
-                    console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
+                    if (res.status === 400) {
+                        alreadyAdded++;
+                    } else {
+                        notAdded++;
+                    }
+                    if (this.config.verbose || res.status !== 400) {
+                        console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
+                    }
                     continue;
                 }
 
@@ -83,8 +118,12 @@ class App {
                     console.log(JSON.stringify(json, null, 2));
                 }
             }
-            console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);
+
+            console.log(`\t${item.title}`);
         }
+
+        if (alreadyAdded) { console.log(`${alreadyAdded} series was already added`); }
+        if (notAdded) { console.log(`${notAdded} series failed to be added`); }
     }
 
     private filterCategories(items: ISeries[]) {

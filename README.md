@@ -1,6 +1,8 @@
 About
 ====
-Import tv series from pogdesign into Sonarr.
+The program scrapes pogdesign and adds new series based on how many users have selected them. This is done by scraping new tv shows starting from the webpage https://www.pogdesign.co.uk/cat/TV-shows-starting-January-2018 (this is just an example for January 2018). The users choose how popular the TV show needs to be and the regarding to the text 'Selected by X Users'. When it has been scraped it looks up the tv shows in sonarr to get metadata on them. Finally it filters out tv shows for genres that the user chose to ignore and add these to sonarr.
+
+Now Trakt is also included to import from.
 
 Install
 =======
@@ -19,38 +21,72 @@ Create config
 Create a config.json file some where with the following content:
 ```
 {
-    "monthsForward": 0,
-    "sonarrApi": "abcdef12345",
-    "sonarrUrl": "http://localhost:8989",
-    "sonarrProfileId": 1,
-    "sonarrPath": "/tv/",
-    "sonarrUseSeasonFolder": true,
     "genresIgnored": ["comedy", "documentary"],
-    "minimumStars": 5000,
+    "sonarr": {
+        "url": "http://localhost:8989",
+        "apiKey": "abcdef12345",
+        "profileId": 1,
+        "path": "/tv/",
+        "useSeasonFolder": true
+    },
+    "scrapers": [
+        {
+            "type": "pogdesign",
+            "monthsForward": 3,
+            "minimumStars": 5000
+        },
+        {
+            "type": "trakt",
+            "apiKey": "abcdef12345,
+            "listName": "trending",
+            "minimumRating": 70,
+            "fromYear": 2018,
+            "toYear": 2020
+        },
+    ],
     "verbose": false,
     "test": false
 }
 ```
 
-**monthsForward** lookups up series from current month and X months in the future. 0 means only current month.
+**genresIgnored**: Genres to be ignored. If a series contain one of the genres in the list it is not imported to Sonarr.
 
-**sonarrApi** can be found in sonarr under Settings > General > Security > API Key
+**verbose**: If you want to include verbose. Can be ignored.
 
-**sonarrUrl** your url to sonarr
+**test**: If you want to test it without adding series to Sonarr. Can be ignored
 
-**sonarrProfileId** the profile id in Sonarr. Must be greater than 0. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --profiles` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --profiles`.
+## Sonarr
+**url**: Sonarr url. Has to include http protocol and port.
 
-**sonarrPath** where Sonarr should store the series. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --paths` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --paths`.
+**apiKey**: Api key for Sonarr. Can be found in sonarr under Settings > General > Security > API Key
 
-**sonarrUseSeasonFolder** if sonarr should create season folders for the series.
+**profileId**: Profile id in Sonarr. Must be greater than 0. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --profiles` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --profiles`.
 
-**genresIgnored** genres to be ignored. If a series contain one of the genres in the list it is not imported to Sonarr.
+**path**: Where Sonarr should store the series. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --paths` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --paths`.
 
-**minimumStars** the minimum users who has given an interest in the series. Pogdesign writes "Selected by X Users"
+**useSeasonFolder**: If sonarr should create season folders for the series.
 
-**verbose** if you want to include verbose. Can be ignored.
+## Scrapers
+**type**: Type must always be declared for each scraper. At this time it can be either `pogdesign` or `trakt`.
 
-**test** if you want to test it without adding series to Sonarr. Can be ignored
+It is possible to add more scrapers as long as they have type `pogdesign` or `trakt`.
+### Pogdesign
+**monthsForward**: Lookups up series from current month and X months in the future. 0 means only current month.
+
+**minimumStars**: Minimum users who has given an interest in the series. Pogdesign writes "Selected by X Users"
+
+### Trakt
+**apiKey**: Your own api key for Trakt.
+
+**listName**: List that you want to crawl from on Trakt. Can be either `trending`, `popular`,`watched`, `collected` or `anticipated`
+
+**minimumRating**: Minimum rating for a show to be imported to Sonarr. Must be between 0 and 100.
+
+**startYear**: Start year for a show to be released after. If this is not specified it will look from current year.
+
+**endYear** End year for a show to be released within. If this is not specified it will look 10 years ahead of current year.
+
+
 
 Run from source
 ===============

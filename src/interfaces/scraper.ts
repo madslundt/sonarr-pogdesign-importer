@@ -1,8 +1,24 @@
 export interface IScraper {
-    process: (fromDate: Date, toDate: Date) => Promise<IItem[]>
+    process: () => Promise<IItem[]>
+}
+
+export type ScraperType = 'trakt' | 'pogdesign';
+
+export interface ITraktConfig {
+    apiKey: string,
+    listName: string,
+    minimumRating: number,
+    fromYear?: number,
+    toYear?: number,
+}
+
+export interface IPogDesignConfig {
+    monthsForward: number,
+    minimumStars: number,
 }
 
 export interface IItem {
     title: string,
-    stars: number
+    tvdbid?: number,
+    year?: number
 }

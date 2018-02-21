@@ -1,12 +1,13 @@
-import { IScraper, IItem } from "../interfaces/scraper";
-import { IConfig } from '../interfaces/config';
 import * as moment from 'moment';
 import * as cheerio from 'cheerio';
 import fetch from 'node-fetch';
+import { IPogDesignConfig, IItem } from 'interfaces/scraper';
+import { IScraper } from '../interfaces/scraper';
 
 
 class PogDesign implements IScraper {
-    private readonly config: IConfig;
+    private readonly config: IPogDesignConfig;
+    private readonly verbose: boolean;
 
     private readonly DATE_STRING: string = 'MMMM-YYYY';
     private readonly URL: string = 'https://www.pogdesign.co.uk';
@@ -16,8 +17,16 @@ class PogDesign implements IScraper {
     private readonly SELECTED_SELECTOR: string = '.hil.selby';
     private readonly SELECTED_REGEX: RegExp = /.+?(\d+).+/g;
 
-    constructor(config: IConfig) {
+    constructor(config: IPogDesignConfig, verbose: boolean = false) {
         this.config = config;
+        this.verbose = verbose;
+
+        this.validateConfig(config);
+    }
+
+    private validateConfig(config: IPogDesignConfig) {
+        if (config.minimumStars < 0) { throw 'minimumStars has to be greater or equal to 0'; }
+        if (config.monthsForward < 0) { throw 'monthsforward has to be greater or equal to 0'; }
     }
 
     private extractSelectedCount(text: string): number {
@@ -39,13 +48,11 @@ class PogDesign implements IScraper {
         const selectedCount = this.extractSelectedCount(selectedText);
 
         if (selectedCount > this.config.minimumStars) {
-            const result: IItem = {
-                title: title,
-                stars: selectedCount
-            };
-
+            const result = <IItem> {
+                title: title
+            }
             return result;
-        } else if (this.config.verbose) {
+        } else if (this.verbose) {
             console.log(`${title} skipped because it only has ${selectedCount} stars`);
         }
 
@@ -65,6 +72,7 @@ class PogDesign implements IScraper {
 
         for (let i = 0; i < children.length; i++) {
             let child = $(children.get(i));
+
             if (child.hasClass(this.SHOW_CLASS)) {
                 const item = await this.getItem(child);
                 if (item) {
@@ -79,20 +87,24 @@ class PogDesign implements IScraper {
     }
 
     private async scrapeUrl(url: string) {
-        let items: IItem[] = [];
         const res = await fetch(url);
+
+        if (!res.ok) {
+            console.log(`Error scraping url: ${url}`);
+        }
+
         const text = await res.text();
-        items = await this.getItems(text);
+        const items = await this.getItems(text);
 
         return items;
     }
 
-    async process(fromDate: Date, toDate: Date) {
-        const months = toDate.getMonth() - fromDate.getMonth();
+    async process() {
+        let date = new Date();
 
-        let date = fromDate;
         let result: IItem[] = [];
-        for (let i = 0; i <= months; i++) {
+
+        for (let i = 0; i <= this.config.monthsForward; i++) {
             const url = this.getUrl(date);
 
             const items = await this.scrapeUrl(url);

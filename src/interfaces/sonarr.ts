@@ -43,7 +43,6 @@ export interface ISeries {
     added: Date;
     ratings: IRatings;
     qualityProfileId: number;
-    stars: number;
     rootFolderPath: string;
 }
 
