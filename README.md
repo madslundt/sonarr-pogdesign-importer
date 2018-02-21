@@ -55,7 +55,7 @@ Create a config.json file some where with the following content:
 
 **test**: If you want to test it without adding series to Sonarr. Can be ignored
 
-## Sonarr
+### Sonarr
 **url**: Sonarr url. Has to include http protocol and port.
 
 **apiKey**: Api key for Sonarr. Can be found in sonarr under Settings > General > Security > API Key
@@ -66,16 +66,16 @@ Create a config.json file some where with the following content:
 
 **useSeasonFolder**: If sonarr should create season folders for the series.
 
-## Scrapers
+### Scrapers
 **type**: Type must always be declared for each scraper. At this time it can be either `pogdesign` or `trakt`.
 
 It is possible to add more scrapers as long as they have type `pogdesign` or `trakt`.
-### Pogdesign
+#### Pogdesign
 **monthsForward**: Lookups up series from current month and X months in the future. 0 means only current month.
 
 **minimumStars**: Minimum users who has given an interest in the series. Pogdesign writes "Selected by X Users"
 
-### Trakt
+#### Trakt
 **apiKey**: Your own api key for Trakt.
 
 **listName**: List that you want to crawl from on Trakt. Can be either `trending`, `popular`,`watched`, `collected` or `anticipated`
