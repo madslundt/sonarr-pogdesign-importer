@@ -87,12 +87,12 @@ class PogDesign implements IScraper {
         return items;
     }
 
-    public async process(fromDate: Date, toDate: Date) {
+    async process(fromDate: Date, toDate: Date) {
         const months = toDate.getMonth() - fromDate.getMonth();
 
         let date = fromDate;
         let result: IItem[] = [];
-        for (let i = 0; i < months; i++) {
+        for (let i = 0; i <= months; i++) {
             const url = this.getUrl(date);
 
             const items = await this.scrapeUrl(url);

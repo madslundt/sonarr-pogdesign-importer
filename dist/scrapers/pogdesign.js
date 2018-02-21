@@ -87,7 +87,7 @@ class PogDesign {
             const months = toDate.getMonth() - fromDate.getMonth();
             let date = fromDate;
             let result = [];
-            for (let i = 0; i < months; i++) {
+            for (let i = 0; i <= months; i++) {
                 const url = this.getUrl(date);
                 const items = yield this.scrapeUrl(url);
                 result = result.concat(items);
