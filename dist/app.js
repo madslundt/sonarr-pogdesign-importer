@@ -31,6 +31,10 @@ class App {
             let result = [];
             for (const item of items) {
                 const res = yield this.sonarrApi.lookupSeries(item.title);
+                if (!res.ok) {
+                    console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
+                    continue;
+                }
                 const series = yield res.json();
                 const thisYear = parseInt(moment().format('YYYY'));
                 for (const serie of series) {
@@ -69,7 +73,15 @@ class App {
         return __awaiter(this, void 0, void 0, function* () {
             for (const item of items) {
                 if (!this.config.test) {
-                    yield this.sonarrApi.addSeries(item);
+                    const res = yield this.sonarrApi.addSeries(item);
+                    if (!res.ok) {
+                        console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
+                        continue;
+                    }
+                    const json = yield res.json();
+                    if (this.config.verbose) {
+                        console.log(JSON.stringify(json, null, 2));
+                    }
                 }
                 console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);
             }

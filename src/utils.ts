@@ -8,22 +8,27 @@ const stripTrailingSlashes = (url: string) => {
 }
 
 const isConfigValid = (config: IConfig) => {
-    return config.sonarrUrl.length &&
-           config.sonarrUrl.startsWith('http') &&
-           config.sonarrApi.length &&
-           config.monthsForward >= 0 &&
-           config.minimumStars >= 0 &&
-           config.sonarrProfileId > 0 &&
-           config.sonarrPath.length &&
-           config.genresIgnored &&
-           config.sonarrUseSeasonFolder !== undefined &&
-           config.sonarrPath.endsWith('/') &&
-           config.sonarrPath.startsWith('/');
+    if (!config.sonarrUrl.length)                   { console.log('sonarrUrl has to be defined'); return false; }
+    if (!config.sonarrApi.length)                   { console.log('sonarrApi has to be defined'); return false; }
+    if (!config.sonarrPath.length)                  { console.log('sonarrPath has to be defined'); return false; }
+    if (!config.genresIgnored)                      { console.log('genresIgnored has to be defined'); return false; }
+    if (config.monthsForward < 0)                   { console.log('monthsForwards has to be greater or equal to 0'); return false; }
+    if (config.minimumStars < 0)                    { console.log('minimumStars has to be greater or equal to 0'); return false; }
+    if (config.sonarrProfileId <= 0)                { console.log('sonarrProfileId has to be greater or equal to 1'); return false; }
+    if (!config.sonarrPath.endsWith('/'))           { console.log('sonarrPath has to end with \'/\''); return false; }
+    if (config.sonarrUseSeasonFolder === undefined) { console.log('sonarrUseSeasonFolder has to be defined'); return false; }
+
+    return true;
 }
 
 const getProfiles = async (config: IConfig) => {
     const sonarrApi = new SonarrApi(config);
     const res = await sonarrApi.getProfiles();
+    if (!res.ok) {
+        console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
+        return;
+    }
+
     const profiles: IProfile[] = await res.json();
 
     if (config.verbose) {
@@ -39,6 +44,11 @@ const getProfiles = async (config: IConfig) => {
 const getPaths = async (config: IConfig) => {
     const sonarrApi = new SonarrApi(config);
     const res = await sonarrApi.getPaths();
+    if (!res.ok) {
+        console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
+        return;
+    }
+
     const paths: IProfile[] = await res.json();
 
     console.log(JSON.stringify(paths, null, 2));

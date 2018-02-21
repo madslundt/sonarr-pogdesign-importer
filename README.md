@@ -32,9 +32,9 @@ Create a config.json file some where with the following content:
 }
 ```
 
-**monthsForward** lookups up series from today's date and X months in the future. 0 means only current month.
+**monthsForward** lookups up series from current month and X months in the future. 0 means only current month.
 
-**sonarrApi** can be found in sonarr under Settings > General > SecuriGidety > API Key
+**sonarrApi** can be found in sonarr under Settings > General > Security > API Key
 
 **sonarrUrl** your url to sonarr
 

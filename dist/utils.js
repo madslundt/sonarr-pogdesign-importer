@@ -14,21 +14,51 @@ const stripTrailingSlashes = (url) => {
     return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 const isConfigValid = (config) => {
-    return config.sonarrUrl.length &&
-        config.sonarrUrl.startsWith('http') &&
-        config.sonarrApi.length &&
-        config.monthsForward >= 0 &&
-        config.minimumStars >= 0 &&
-        config.sonarrProfileId > 0 &&
-        config.sonarrPath.length &&
-        config.genresIgnored &&
-        config.sonarrUseSeasonFolder !== undefined &&
-        config.sonarrPath.endsWith('/') &&
-        config.sonarrPath.startsWith('/');
+    if (!config.sonarrUrl.length) {
+        console.log('sonarrUrl has to be defined');
+        return false;
+    }
+    if (!config.sonarrApi.length) {
+        console.log('sonarrApi has to be defined');
+        return false;
+    }
+    if (!config.sonarrPath.length) {
+        console.log('sonarrPath has to be defined');
+        return false;
+    }
+    if (!config.genresIgnored) {
+        console.log('genresIgnored has to be defined');
+        return false;
+    }
+    if (config.monthsForward < 0) {
+        console.log('monthsForwards has to be greater or equal to 0');
+        return false;
+    }
+    if (config.minimumStars < 0) {
+        console.log('minimumStars has to be greater or equal to 0');
+        return false;
+    }
+    if (config.sonarrProfileId <= 0) {
+        console.log('sonarrProfileId has to be greater or equal to 1');
+        return false;
+    }
+    if (!config.sonarrPath.endsWith('/')) {
+        console.log('sonarrPath has to end with \'/\'');
+        return false;
+    }
+    if (config.sonarrUseSeasonFolder === undefined) {
+        console.log('sonarrUseSeasonFolder has to be defined');
+        return false;
+    }
+    return true;
 };
 const getProfiles = (config) => __awaiter(this, void 0, void 0, function* () {
     const sonarrApi = new sonarrapi_1.default(config);
     const res = yield sonarrApi.getProfiles();
+    if (!res.ok) {
+        console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
+        return;
+    }
     const profiles = yield res.json();
     if (config.verbose) {
         console.log(JSON.stringify(profiles, null, 2));
@@ -43,6 +73,10 @@ const getProfiles = (config) => __awaiter(this, void 0, void 0, function* () {
 const getPaths = (config) => __awaiter(this, void 0, void 0, function* () {
     const sonarrApi = new sonarrapi_1.default(config);
     const res = yield sonarrApi.getPaths();
+    if (!res.ok) {
+        console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
+        return;
+    }
     const paths = yield res.json();
     console.log(JSON.stringify(paths, null, 2));
 });

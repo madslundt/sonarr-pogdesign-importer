@@ -30,6 +30,11 @@ class App {
 
         for (const item of items) {
             const res = await this.sonarrApi.lookupSeries(item.title);
+            if (!res.ok) {
+                console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
+                continue;
+            }
+
             const series: ISeries[] = await res.json();
 
             const thisYear = parseInt(moment().format('YYYY'));
@@ -66,7 +71,17 @@ class App {
     private async addSeries(items: ISeries[]) {
         for (const item of items) {
             if (!this.config.test) {
-                await this.sonarrApi.addSeries(item);
+                const res = await this.sonarrApi.addSeries(item);
+                if (!res.ok) {
+                    console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
+                    continue;
+                }
+
+                const json = await res.json();
+
+                if (this.config.verbose) {
+                    console.log(JSON.stringify(json, null, 2));
+                }
             }
             console.log(`Added ${item.title} with ${item.stars} stars to Sonarr`);
         }
