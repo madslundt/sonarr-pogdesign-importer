@@ -24,6 +24,7 @@ Create a config.json file some where with the following content:
     "sonarrUrl": "http://localhost:8989",
     "sonarrProfileId": 1,
     "sonarrPath": "/tv/",
+    "sonarrSeasonFolder": true,
     "genresIgnored": ["comedy", "documentary"],
     "minimumStars": 5000,
     "verbose": false,
@@ -31,7 +32,7 @@ Create a config.json file some where with the following content:
 }
 ```
 
-**monthsForward** lookups up series from today's date and X months in the future.
+**monthsForward** lookups up series from today's date and X months in the future. 0 means only current month.
 
 **sonarrApi** can be found in sonarr under Settings > General > SecuriGidety > API Key
 
@@ -40,6 +41,8 @@ Create a config.json file some where with the following content:
 **sonarrProfileId** the profile id in Sonarr. Must be greater than 0. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --profiles` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --profiles`.
 
 **sonarrPath** where Sonarr should store the series. Can be found by running `sonarr-pogdesign-importer --config="[CONFIG PATH]" --paths` or `sonarr-pogdesign-importer -c "[CONFIG PATH]" --paths`.
+
+**sonarrSeasonFolder** if sonarr should create season folders for the series.
 
 **genresIgnored** genres to be ignored. If a series contain one of the genres in the list it is not imported to Sonarr.
 

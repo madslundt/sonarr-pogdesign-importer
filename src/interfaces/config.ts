@@ -4,6 +4,7 @@ export interface IConfig {
     sonarrUrl: string,
     sonarrProfileId: number,
     sonarrPath: string,
+    sonarrUseSeasonFolder: boolean,
     genresIgnored: string[],
     minimumStars: number,
     verbose?: boolean,

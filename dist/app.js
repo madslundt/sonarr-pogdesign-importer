@@ -38,6 +38,7 @@ class App {
                         serie.stars = item.stars;
                         serie.profileId = this.config.sonarrProfileId;
                         serie.rootFolderPath = this.config.sonarrPath;
+                        serie.seasonFolder = this.config.sonarrUseSeasonFolder;
                         result.push(serie);
                     }
                 }

@@ -15,6 +15,8 @@ const isConfigValid = (config: IConfig) => {
            config.minimumStars >= 0 &&
            config.sonarrProfileId > 0 &&
            config.sonarrPath.length &&
+           config.genresIgnored &&
+           config.sonarrUseSeasonFolder !== undefined &&
            config.sonarrPath.endsWith('/') &&
            config.sonarrPath.startsWith('/');
 }
