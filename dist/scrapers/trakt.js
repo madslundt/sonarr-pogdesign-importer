@@ -14,15 +14,14 @@ class Trakt {
         this.URL = 'https://api.trakt.tv/shows/';
         this.MAX_RATING = 100;
         this.VERSION = '2';
+        this.DEFAULT_TO_YEAR_OFFSET = 10;
         this.config = config;
         this.verbose = verbose;
         if (!this.config.fromYear) {
             this.config.fromYear = new Date().getFullYear();
         }
         if (!this.config.toYear) {
-            const future = new Date();
-            future.setFullYear(future.getFullYear() + 10);
-            this.config.toYear = future.getFullYear();
+            this.config.toYear = this.config.fromYear + this.DEFAULT_TO_YEAR_OFFSET;
         }
         this.validateConfig(this.config);
     }
