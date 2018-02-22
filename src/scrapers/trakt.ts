@@ -10,6 +10,7 @@ class Trakt implements IScraper {
     private readonly URL: string = 'https://api.trakt.tv/shows/';
     private readonly MAX_RATING: number = 100;
     private readonly VERSION: string = '2';
+    private readonly DEFAULT_TO_YEAR_OFFSET: number = 10;
 
 
     constructor(config: ITraktConfig, verbose: boolean = false) {
@@ -21,9 +22,7 @@ class Trakt implements IScraper {
         }
 
         if (!this.config.toYear) {
-            const future = new Date();
-            future.setFullYear(future.getFullYear() + 10);
-            this.config.toYear = future.getFullYear();
+            this.config.toYear = this.config.fromYear + this.DEFAULT_TO_YEAR_OFFSET;
         }
 
         this.validateConfig(this.config);
