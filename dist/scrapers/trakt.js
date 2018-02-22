@@ -15,6 +15,7 @@ class Trakt {
         this.MAX_RATING = 100;
         this.VERSION = '2';
         this.DEFAULT_TO_YEAR_OFFSET = 10;
+        this.PAGE_LIMIT = 100;
         this.config = config;
         this.verbose = verbose;
         if (!this.config.fromYear) {
@@ -63,7 +64,7 @@ class Trakt {
     getTitles() {
         const years = `${this.config.fromYear}-${this.config.toYear}`;
         const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
-        const url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}`;
+        const url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
         if (this.verbose) {
             console.log(`Fetching Trakt between ${years} and ratings between ${ratings}`);
         }

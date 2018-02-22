@@ -11,6 +11,7 @@ class Trakt implements IScraper {
     private readonly MAX_RATING: number = 100;
     private readonly VERSION: string = '2';
     private readonly DEFAULT_TO_YEAR_OFFSET: number = 10;
+    private readonly PAGE_LIMIT: number = 100;
 
 
     constructor(config: ITraktConfig, verbose: boolean = false) {
@@ -69,7 +70,7 @@ class Trakt implements IScraper {
     private getTitles() {
         const years = `${this.config.fromYear}-${this.config.toYear}`;
         const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
-        const url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}`;
+        const url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
 
         if (this.verbose) {
             console.log(`Fetching Trakt between ${years} and ratings between ${ratings}`);

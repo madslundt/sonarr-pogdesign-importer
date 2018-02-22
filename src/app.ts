@@ -79,10 +79,13 @@ class App {
     }
 
     async process() {
+        if (this.config.verbose) { console.log('Scraping started'); }
         const scrapeItems = await this.scrape();
 
+        if (this.config.verbose) { console.log(`Got ${scrapeItems.length} series from scraping`); }
         let items = await this.lookupItems(scrapeItems);
 
+        if (this.config.verbose) { console.log(`${items.length}/${scrapeItems} series were found in Sonarr.`); }
         if (this.config.genresIgnored && this.config.genresIgnored.length) {
             if (this.config.verbose) { console.log(); }
             items = this.filterCategories(items);
@@ -129,7 +132,7 @@ class App {
     private filterCategories(items: ISeries[]) {
         const genres = this.config.genresIgnored.map(genre => genre.toLocaleLowerCase());
 
-        return items.filter(item => {
+        const result = items.filter(item => {
             const itemGenres = item.genres.map(genre => genre.toLocaleLowerCase());
             const isOk = !genres.filter(genre => {
                 return itemGenres.indexOf(genre) !== -1;
@@ -140,6 +143,14 @@ class App {
             }
             return isOk;
         });
+
+        console.log();
+
+        if (this.config.verbose) {
+            console.log(`${items.length - result.length} series were skipped.`);
+        }
+
+        return result;
     }
 }
 
