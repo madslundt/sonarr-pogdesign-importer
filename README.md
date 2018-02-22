@@ -55,6 +55,10 @@ Create a config.json file some where with the following content:
 
 **test**: If you want to test it without adding series to Sonarr. Can be ignored
 
+**sonarr**: Sonarr configurations see [Sonarr section](#sonarr)
+
+**scrapers**: Scraper configurations see [scraper section](#scrapers)
+
 ### Sonarr
 **url**: Sonarr url. Has to include http protocol and port.
 
@@ -66,10 +70,10 @@ Create a config.json file some where with the following content:
 
 **useSeasonFolder**: If sonarr should create season folders for the series.
 
-### Scrapers
+### Scraper
 **type**: Type must always be declared for each scraper. At this time it can be either `pogdesign` or `trakt`.
 
-It is possible to add more scrapers as long as they have type `pogdesign` or `trakt`.
+There are no limit on how many scraper configurations you fill in, as long as they match configuration for either `pogdesign` or `trakt`. Atleast one scraper is required.
 #### Pogdesign
 **monthsForward**: Lookups up series from current month and X months in the future. 0 means only current month.
 
