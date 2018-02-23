@@ -55,6 +55,10 @@ class App {
         let result: ISeries[] = [];
 
         for (const item of items) {
+            if (result.some(r => r.tvdbId === item.tvdbid || r.title.toLocaleLowerCase() === item.title.toLocaleLowerCase())) {
+                continue;
+            }
+            
             const res = await this.sonarrApi.lookupSeries(item.title);
             if (!res.ok) {
                 console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
@@ -70,7 +74,10 @@ class App {
                     serie.rootFolderPath = this.config.sonarr.path;
                     serie.seasonFolder = this.config.sonarr.useSeasonFolder;
 
-                    result.push(serie);
+                    if (!result.some(r => r.tvdbId === serie.tvdbId)) {
+                        result.push(serie);
+                    }
+                    break;
                 }
             }
         }
