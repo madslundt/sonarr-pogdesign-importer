@@ -37,7 +37,7 @@ Create a config.json file some where with the following content:
         },
         {
             "type": "trakt",
-            "apiKey": "abcdef12345,
+            "apiKey": "abcdef12345",
             "listName": "trending",
             "minimumRating": 70,
             "fromYear": 2018,
