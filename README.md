@@ -57,7 +57,7 @@ Create a config.json file some where with the following content:
 
 **sonarr**: Sonarr configurations see [Sonarr section](#sonarr)
 
-**scrapers**: Scraper configurations see [scraper section](#scrapers)
+**scrapers**: A list of scrapers. See [scraper section](#scraper)
 
 ### Sonarr
 **url**: Sonarr url. Has to include http protocol and port.
