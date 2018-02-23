@@ -53,9 +53,6 @@ class PogDesign {
                 };
                 return result;
             }
-            else if (this.verbose) {
-                console.log(`${title} skipped because it only has ${selectedCount} stars`);
-            }
             return null;
         });
     }
@@ -90,6 +87,9 @@ class PogDesign {
             }
             const text = yield res.text();
             const items = yield this.getItems(text);
+            if (this.verbose && items.length) {
+                console.log(`Found ${items.length} series.\n`);
+            }
             return items;
         });
     }
@@ -109,6 +109,9 @@ class PogDesign {
     getUrl(date) {
         const dateFormat = this.getDateFormat(date);
         const result = `${this.URL}/cat/TV-shows-starting-${dateFormat}`;
+        if (this.verbose) {
+            console.log(`Fetching PogDesign for ${dateFormat}`);
+        }
         return result;
     }
     getDateFormat(date) {

@@ -26,8 +26,7 @@ class App {
                 if (items && items.length) {
                     result = result.concat(items);
                 }
-                console.log();
-                console.log(`${scraper.type} finished successfully with ${items.length} item(s)`);
+                console.log(`${scraper.type} finished successfully with ${items.length} series`);
             } catch (exception) {
                 console.log(`Skipping... ${exception}`);
             }
@@ -55,10 +54,10 @@ class App {
         let result: ISeries[] = [];
 
         for (const item of items) {
-            if (result.some(r => r.tvdbId === item.tvdbid || r.title.toLocaleLowerCase() === item.title.toLocaleLowerCase())) {
+            if (result.some(r => r.tvdbId === item.tvdbId || r.title.toLocaleLowerCase() === item.title.toLocaleLowerCase())) {
                 continue;
             }
-            
+
             const res = await this.sonarrApi.lookupSeries(item.title);
             if (!res.ok) {
                 console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
@@ -69,7 +68,7 @@ class App {
 
             const thisYear = parseInt(moment().format('YYYY'));
             for (const serie of series) {
-                if ((item.tvdbid === serie.tvdbId) || (!item.tvdbid && serie.year >= thisYear)) {
+                if ((item.tvdbId === serie.tvdbId) || (!item.tvdbId && serie.year >= thisYear)) {
                     serie.profileId = this.config.sonarr.profileId;
                     serie.rootFolderPath = this.config.sonarr.path;
                     serie.seasonFolder = this.config.sonarr.useSeasonFolder;
@@ -89,10 +88,10 @@ class App {
         if (this.config.verbose) { console.log('Scraping started'); }
         const scrapeItems = await this.scrape();
 
-        if (this.config.verbose) { console.log(`Got ${scrapeItems.length} series from scraping`); }
+        if (this.config.verbose) { console.log(`Scraped ${scrapeItems.length} series in total.`); }
         let items = await this.lookupItems(scrapeItems);
 
-        if (this.config.verbose) { console.log(`${items.length}/${scrapeItems} series were found in Sonarr.`); }
+        if (this.config.verbose) { console.log(`\n${items.length}/${scrapeItems.length} series were found in Sonarr.`); }
         if (this.config.genresIgnored && this.config.genresIgnored.length) {
             if (this.config.verbose) { console.log(); }
             items = this.filterCategories(items);
@@ -132,8 +131,17 @@ class App {
             console.log(`\t${item.title}`);
         }
 
+        console.log();
         if (alreadyAdded) { console.log(`${alreadyAdded} series was already added`); }
         if (notAdded) { console.log(`${notAdded} series failed to be added`); }
+
+        const totalImported = items.length - alreadyAdded - notAdded;
+
+        if (totalImported) {
+            console.log(`${totalImported} was successfully imported to Sonarr`);
+        } else if (notAdded) {
+            console.log('Something went wrong when adding. Please try again with verbose.')
+        }
     }
 
     private filterCategories(items: ISeries[]) {

@@ -47,7 +47,7 @@ class Trakt implements IScraper {
             return <IItem>{
                 title: show.show.title,
                 year: show.show.year,
-                tvdbid: show.show.ids.tvdb
+                tvdbId: show.show.ids.tvdb
             };
         });
 

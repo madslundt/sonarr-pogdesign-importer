@@ -28,8 +28,7 @@ class App {
                     if (items && items.length) {
                         result = result.concat(items);
                     }
-                    console.log();
-                    console.log(`${scraper.type} finished successfully with ${items.length} item(s)`);
+                    console.log(`${scraper.type} finished successfully with ${items.length} series`);
                 }
                 catch (exception) {
                     console.log(`Skipping... ${exception}`);
@@ -58,6 +57,9 @@ class App {
         return __awaiter(this, void 0, void 0, function* () {
             let result = [];
             for (const item of items) {
+                if (result.some(r => r.tvdbId === item.tvdbId || r.title.toLocaleLowerCase() === item.title.toLocaleLowerCase())) {
+                    continue;
+                }
                 const res = yield this.sonarrApi.lookupSeries(item.title);
                 if (!res.ok) {
                     console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
@@ -66,11 +68,14 @@ class App {
                 const series = yield res.json();
                 const thisYear = parseInt(moment().format('YYYY'));
                 for (const serie of series) {
-                    if ((item.tvdbid === serie.tvdbId) || (!item.tvdbid && serie.year >= thisYear)) {
+                    if ((item.tvdbId === serie.tvdbId) || (!item.tvdbId && serie.year >= thisYear)) {
                         serie.profileId = this.config.sonarr.profileId;
                         serie.rootFolderPath = this.config.sonarr.path;
                         serie.seasonFolder = this.config.sonarr.useSeasonFolder;
-                        result.push(serie);
+                        if (!result.some(r => r.tvdbId === serie.tvdbId)) {
+                            result.push(serie);
+                        }
+                        break;
                     }
                 }
             }
@@ -84,11 +89,11 @@ class App {
             }
             const scrapeItems = yield this.scrape();
             if (this.config.verbose) {
-                console.log(`Got ${scrapeItems.length} series from scraping`);
+                console.log(`Scraped ${scrapeItems.length} series in total.`);
             }
             let items = yield this.lookupItems(scrapeItems);
             if (this.config.verbose) {
-                console.log(`${items.length}/${scrapeItems} series were found in Sonarr.`);
+                console.log(`\n${items.length}/${scrapeItems.length} series were found in Sonarr.`);
             }
             if (this.config.genresIgnored && this.config.genresIgnored.length) {
                 if (this.config.verbose) {
@@ -129,11 +134,19 @@ class App {
                 }
                 console.log(`\t${item.title}`);
             }
+            console.log();
             if (alreadyAdded) {
                 console.log(`${alreadyAdded} series was already added`);
             }
             if (notAdded) {
                 console.log(`${notAdded} series failed to be added`);
+            }
+            const totalImported = items.length - alreadyAdded - notAdded;
+            if (totalImported) {
+                console.log(`${totalImported} was successfully imported to Sonarr`);
+            }
+            else if (notAdded) {
+                console.log('Something went wrong when adding. Please try again with verbose.');
             }
         });
     }

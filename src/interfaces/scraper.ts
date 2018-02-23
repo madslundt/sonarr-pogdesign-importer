@@ -19,6 +19,6 @@ export interface IPogDesignConfig {
 
 export interface IItem {
     title: string,
-    tvdbid?: number,
+    tvdbId?: number,
     year?: number
 }
