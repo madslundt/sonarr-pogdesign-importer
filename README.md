@@ -88,7 +88,7 @@ There are no limit on how many scraper configurations you fill in, as long as th
 
 **startYear**: Start year for a show to be released after. If this is not specified it will look from current year.
 
-**endYear** End year for a show to be released within. If this is not specified it will look 10 years ahead of current year.
+**endYear** End year for a show to be released within. If this is not specified it will look 10 years ahead of startYear.
 
 
 
