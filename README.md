@@ -4,7 +4,7 @@ The program scrapes pogdesign and adds new series based on how many users have s
 
 Now Trakt is also included to import from.
 
-[![NPM](https://nodei.co/npm/sonarr-pogdesign-importer.png?downloads=true&downloadRank=true)](https://nodei.co/npm/sonarr-pogdesign-importer/)
+[![NPM](https://nodei.co/npm/sonarr-pogdesign-importer.png?compact=true)](https://nodei.co/npm/sonarr-pogdesign-importer/)
 
 Install
 =======
