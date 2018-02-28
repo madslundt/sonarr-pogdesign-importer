@@ -44,7 +44,7 @@ Create a config.json file some where with the following content:
             "minimumRating": 70,
             "fromYear": 2018,
             "toYear": 2020
-        },
+        }
     ],
     "verbose": false,
     "test": false
