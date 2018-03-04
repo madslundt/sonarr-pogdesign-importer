@@ -16,4 +16,8 @@ export interface IShow {
 export interface ITraktShow {
     list_count: number;
     show: IShow;
+
+    title?: string,
+    year?: number,
+    ids?: IIds
 }

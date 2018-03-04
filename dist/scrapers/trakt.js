@@ -42,10 +42,11 @@ class Trakt {
     }
     getItems(shows) {
         const result = shows.map(show => {
+            console.log(show);
             return {
-                title: show.show.title,
-                year: show.show.year,
-                tvdbId: show.show.ids.tvdb
+                title: show.title || show.show.title,
+                year: show.year || show.show.year,
+                tvdbId: show.ids ? show.ids.tvdb : show.show.ids.tvdb
             };
         });
         return result;
