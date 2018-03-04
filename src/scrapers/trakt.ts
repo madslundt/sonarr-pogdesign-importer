@@ -44,7 +44,6 @@ class Trakt implements IScraper {
 
     private getItems(shows: ITraktShow[]) {
         const result = shows.map(show => {
-            console.log(show);
             return <IItem>{
                 title: show.title || show.show.title,
                 year: show.year || show.show.year,
