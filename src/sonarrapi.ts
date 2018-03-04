@@ -12,6 +12,7 @@ class SonarrApi {
     }
 
     lookupSeries(term: string) {
+        term = encodeURIComponent(term);
         const url: string = `${this.url}/api/series/lookup?term=${term}`;
 
         return fetch(url, {

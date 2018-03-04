@@ -7,6 +7,7 @@ class SonarrApi {
         this.apiKey = config.sonarr.apiKey;
     }
     lookupSeries(term) {
+        term = encodeURIComponent(term);
         const url = `${this.url}/api/series/lookup?term=${term}`;
         return node_fetch_1.default(url, {
             headers: {
