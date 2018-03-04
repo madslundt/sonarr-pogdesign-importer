@@ -88,7 +88,16 @@ const loadConfig = (args) => __awaiter(this, void 0, void 0, function* () {
         console.log(`Can not file any config located at ${configPath}`);
         process.exit(1);
     }
-    const result = JSON.parse(fileContent);
+    let result;
+    try {
+        result = JSON.parse(fileContent);
+    }
+    catch (exception) {
+        console.log(exception.toString());
+        console.log('\nConfig is not valid');
+        process.exit(1);
+        return null;
+    }
     result.sonarr.url = stripTrailingSlashes(result.sonarr.url);
     if (args.profiles) {
         yield getProfiles(result);

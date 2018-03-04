@@ -21,7 +21,6 @@ class App {
         for (const scraper of this.config.scrapers) {
             try {
                 console.log(`${scraper.type} started`);
-                console.log();
                 const items = await this.getItems(scraper);
                 if (items && items.length) {
                     result = result.concat(items);
@@ -52,6 +51,7 @@ class App {
 
     private async lookupItems(items: IItem[]) {
         let result: ISeries[] = [];
+        let alreadyExists: number = 0;
 
         for (const item of items) {
             if (result.some(r => r.tvdbId === item.tvdbId || r.title.toLocaleLowerCase() === item.title.toLocaleLowerCase())) {
@@ -73,13 +73,18 @@ class App {
                     serie.rootFolderPath = this.config.sonarr.path;
                     serie.seasonFolder = this.config.sonarr.useSeasonFolder;
 
-                    if (!result.some(r => r.tvdbId === serie.tvdbId)) {
+                    if (!result.some(r => r.tvdbId === serie.tvdbId) && !serie.added) {
                         result.push(serie);
+                    } else if (this.config.verbose && serie.added) {
+                        alreadyExists++;
                     }
                     break;
                 }
             }
         }
+
+        if (this.config.verbose && !result.length) { console.log(`\nAll series already exists in Sonarr.`); }
+        if (this.config.verbose && result.length) { console.log(`\n${alreadyExists} already exists in Sonarr.`); }
 
         return result;
     }
@@ -88,33 +93,35 @@ class App {
         if (this.config.verbose) { console.log('Scraping started'); }
         const scrapeItems = await this.scrape();
 
-        if (this.config.verbose) { console.log(`Scraped ${scrapeItems.length} series in total.`); }
         let items = await this.lookupItems(scrapeItems);
 
-        if (this.config.verbose) { console.log(`\n${items.length}/${scrapeItems.length} series were found in Sonarr.`); }
-        if (this.config.genresIgnored && this.config.genresIgnored.length) {
-            if (this.config.verbose) { console.log(); }
-            items = this.filterCategories(items);
-        }
+        console.log();
+        if (items.length > 0) {
+            if (this.config.verbose) { console.log(`\n${items.length} new series are ready to be imported into Sonarr.`); }
 
-        if (this.config.verbose) { console.log(); }
-        await this.addSeries(items);
+            if (this.config.genresIgnored && this.config.genresIgnored.length) {
+                if (this.config.verbose) { console.log(); }
+                items = this.filterCategories(items);
+            }
+
+            if (this.config.verbose) { console.log(); }
+            await this.addSeries(items);
+        } else {
+            console.log('Nothing new to add to Sonarr');
+        }
 
     }
 
     private async addSeries(items: ISeries[]) {
-        console.log(`${items.length} series ready to be imported to Sonarr:`);
-        let alreadyAdded: number = 0;
         let notAdded: number = 0;
+
         for (const item of items) {
+            console.log(`\t${item.title}`);
+
             if (!this.config.test) {
                 const res = await this.sonarrApi.addSeries(item);
                 if (!res.ok) {
-                    if (res.status === 400) {
-                        alreadyAdded++;
-                    } else {
-                        notAdded++;
-                    }
+                    notAdded++;
                     if (this.config.verbose || res.status !== 400) {
                         console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
                     }
@@ -127,15 +134,12 @@ class App {
                     console.log(JSON.stringify(json, null, 2));
                 }
             }
-
-            console.log(`\t${item.title}`);
         }
 
         console.log();
-        if (alreadyAdded) { console.log(`${alreadyAdded} series was already added`); }
         if (notAdded) { console.log(`${notAdded} series failed to be added`); }
 
-        const totalImported = items.length - alreadyAdded - notAdded;
+        const totalImported = items.length - notAdded;
 
         if (totalImported) {
             console.log(`${totalImported} was successfully imported to Sonarr`);

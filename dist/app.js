@@ -23,7 +23,6 @@ class App {
             for (const scraper of this.config.scrapers) {
                 try {
                     console.log(`${scraper.type} started`);
-                    console.log();
                     const items = yield this.getItems(scraper);
                     if (items && items.length) {
                         result = result.concat(items);
@@ -56,6 +55,7 @@ class App {
     lookupItems(items) {
         return __awaiter(this, void 0, void 0, function* () {
             let result = [];
+            let alreadyExists = 0;
             for (const item of items) {
                 if (result.some(r => r.tvdbId === item.tvdbId || r.title.toLocaleLowerCase() === item.title.toLocaleLowerCase())) {
                     continue;
@@ -72,12 +72,21 @@ class App {
                         serie.profileId = this.config.sonarr.profileId;
                         serie.rootFolderPath = this.config.sonarr.path;
                         serie.seasonFolder = this.config.sonarr.useSeasonFolder;
-                        if (!result.some(r => r.tvdbId === serie.tvdbId)) {
+                        if (!result.some(r => r.tvdbId === serie.tvdbId) && !serie.added) {
                             result.push(serie);
+                        }
+                        else if (this.config.verbose && serie.added) {
+                            alreadyExists++;
                         }
                         break;
                     }
                 }
+            }
+            if (this.config.verbose && !result.length) {
+                console.log(`\nAll series already exists in Sonarr.`);
+            }
+            if (this.config.verbose && result.length) {
+                console.log(`\n${alreadyExists} already exists in Sonarr.`);
             }
             return result;
         });
@@ -88,40 +97,37 @@ class App {
                 console.log('Scraping started');
             }
             const scrapeItems = yield this.scrape();
-            if (this.config.verbose) {
-                console.log(`Scraped ${scrapeItems.length} series in total.`);
-            }
             let items = yield this.lookupItems(scrapeItems);
-            if (this.config.verbose) {
-                console.log(`\n${items.length}/${scrapeItems.length} series were found in Sonarr.`);
-            }
-            if (this.config.genresIgnored && this.config.genresIgnored.length) {
+            console.log();
+            if (items.length > 0) {
+                if (this.config.verbose) {
+                    console.log(`\n${items.length} new series are ready to be imported into Sonarr.`);
+                }
+                if (this.config.genresIgnored && this.config.genresIgnored.length) {
+                    if (this.config.verbose) {
+                        console.log();
+                    }
+                    items = this.filterCategories(items);
+                }
                 if (this.config.verbose) {
                     console.log();
                 }
-                items = this.filterCategories(items);
+                yield this.addSeries(items);
             }
-            if (this.config.verbose) {
-                console.log();
+            else {
+                console.log('Nothing new to add to Sonarr');
             }
-            yield this.addSeries(items);
         });
     }
     addSeries(items) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`${items.length} series ready to be imported to Sonarr:`);
-            let alreadyAdded = 0;
             let notAdded = 0;
             for (const item of items) {
+                console.log(`\t${item.title}`);
                 if (!this.config.test) {
                     const res = yield this.sonarrApi.addSeries(item);
                     if (!res.ok) {
-                        if (res.status === 400) {
-                            alreadyAdded++;
-                        }
-                        else {
-                            notAdded++;
-                        }
+                        notAdded++;
                         if (this.config.verbose || res.status !== 400) {
                             console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
                         }
@@ -132,16 +138,12 @@ class App {
                         console.log(JSON.stringify(json, null, 2));
                     }
                 }
-                console.log(`\t${item.title}`);
             }
             console.log();
-            if (alreadyAdded) {
-                console.log(`${alreadyAdded} series was already added`);
-            }
             if (notAdded) {
                 console.log(`${notAdded} series failed to be added`);
             }
-            const totalImported = items.length - alreadyAdded - notAdded;
+            const totalImported = items.length - notAdded;
             if (totalImported) {
                 console.log(`${totalImported} was successfully imported to Sonarr`);
             }

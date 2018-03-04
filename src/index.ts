@@ -1,12 +1,11 @@
 import * as minimist from 'minimist';
 import { loadConfig } from './utils';
 import App from './app';
-import { IConfig } from './interfaces/config';
 
 
 const init = async () => {
     const args = minimist(process.argv.slice(2));
-    const config: IConfig = await loadConfig(args);
+    const config = await loadConfig(args);
     if (!config) {
         process.exit(1);
     } else {

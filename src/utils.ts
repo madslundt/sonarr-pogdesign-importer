@@ -69,14 +69,16 @@ const loadConfig = async (args: {[key: string]: string}) => {
         console.log(`Can not file any config located at ${configPath}`);
         process.exit(1);
     }
-    
+
     let result: IConfig;
     try {
         result = JSON.parse(fileContent);
     } catch (exception) {
         console.log(exception.toString());
         console.log('\nConfig is not valid');
-        process.exit(1);   
+        process.exit(1);
+
+        return null;
     }
 
     result.sonarr.url = stripTrailingSlashes(result.sonarr.url);
