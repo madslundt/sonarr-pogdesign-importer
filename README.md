@@ -1,8 +1,7 @@
 About
 ====
-The program scrapes pogdesign and adds new series based on how many users have selected them. This is done by scraping new tv shows starting from the webpage https://www.pogdesign.co.uk/cat/TV-shows-starting-January-2018 (this is just an example for January 2018). The users choose how popular the TV show needs to be and the regarding to the text 'Selected by X Users'. When it has been scraped it looks up the tv shows in sonarr to get metadata on them. Finally it filters out tv shows for genres that the user chose to ignore and add these to sonarr.
-
-Now Trakt is also included to import from.
+Scrape tv series from either Pogdesign and/or Trakt and import them into Sonarr based on ratings and genre. Pogdesign rating is how many users have selected the tv show. Trakt rating is the rating from 0-100.
+When the tv series have been found from Trakt and/or Pogdesign it is being looked up in Sonarr and based on the genre from Sonarr it is imported into Sonarr for later download.
 
 [![NPM](https://nodei.co/npm/sonarr-pogdesign-importer.png?compact=true)](https://nodei.co/npm/sonarr-pogdesign-importer/)
 
