@@ -53,6 +53,16 @@ class SonarrApi {
             }
         });
     }
+
+    getSeries() {
+        const url: string = `${this.url}/api/series`;
+
+        return fetch(url, {
+            headers: {
+                'X-Api-Key': this.apiKey
+            },
+        });
+    }
 }
 
 export default SonarrApi;

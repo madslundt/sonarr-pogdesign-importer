@@ -82,14 +82,33 @@ class App {
         return result;
     }
 
+    private async lookupLocal(series: ISeries[]) {
+        const res = await this.sonarrApi.getSeries();
+
+        if (!res.ok) {
+            console.log(`Sonarr responded with ${res.status}: ${await res.text()}`);
+            return series;
+        }
+
+        const localSeries: ISeries[] = await res.json();
+        const localSeriesTvdbId: number[] = localSeries.map(s => s.tvdbId);
+
+        const result = series.filter(item => !localSeriesTvdbId.some(local => local === item.tvdbId));
+
+        return result;
+    }
+
     async process() {
         if (this.config.verbose) { console.log('Scraping started'); }
         const scrapeItems = await this.scrape();
 
-        let items = await this.lookupItems(scrapeItems);
+        const scrapedItems = await this.lookupItems(scrapeItems);
 
         console.log();
-        if (items.length > 0) {
+        if (scrapedItems.length > 0) {
+            let items = await this.lookupLocal(scrapedItems);
+
+            if (this.config.verbose && scrapedItems.length > items.length) { console.log(`\n${scrapedItems.length - items.length}/${scrapedItems.length} series already exists in Sonarr.`); }
             if (this.config.verbose) { console.log(`\n${items.length} new series are ready to be imported into Sonarr.`); }
 
             if (this.config.genresIgnored && this.config.genresIgnored.length) {
@@ -133,7 +152,7 @@ class App {
         const totalImported = items.length - notAdded;
 
         if (totalImported) {
-            console.log(`${totalImported} was successfully imported to Sonarr`);
+            console.log(`${totalImported} series were successfully imported to Sonarr`);
         } else if (notAdded) {
             console.log('Something went wrong when adding. Please try again with verbose.')
         }

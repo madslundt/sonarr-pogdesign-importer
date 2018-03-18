@@ -22,7 +22,7 @@ class Trakt {
             this.config.fromYear = new Date().getFullYear();
         }
         if (!this.config.toYear) {
-            this.config.toYear = this.config.fromYear + this.DEFAULT_TO_YEAR_OFFSET;
+            this.config.toYear = new Date().getFullYear() + this.DEFAULT_TO_YEAR_OFFSET;
         }
         this.validateConfig(this.config);
     }

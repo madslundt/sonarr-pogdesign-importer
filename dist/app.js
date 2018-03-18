@@ -81,15 +81,32 @@ class App {
             return result;
         });
     }
+    lookupLocal(series) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield this.sonarrApi.getSeries();
+            if (!res.ok) {
+                console.log(`Sonarr responded with ${res.status}: ${yield res.text()}`);
+                return series;
+            }
+            const localSeries = yield res.json();
+            const localSeriesTvdbId = localSeries.map(s => s.tvdbId);
+            const result = series.filter(item => !localSeriesTvdbId.some(local => local === item.tvdbId));
+            return result;
+        });
+    }
     process() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.config.verbose) {
                 console.log('Scraping started');
             }
             const scrapeItems = yield this.scrape();
-            let items = yield this.lookupItems(scrapeItems);
+            const scrapedItems = yield this.lookupItems(scrapeItems);
             console.log();
-            if (items.length > 0) {
+            if (scrapedItems.length > 0) {
+                let items = yield this.lookupLocal(scrapedItems);
+                if (this.config.verbose && scrapedItems.length > items.length) {
+                    console.log(`\n${scrapedItems.length - items.length}/${scrapedItems.length} series already exists in Sonarr.`);
+                }
                 if (this.config.verbose) {
                     console.log(`\n${items.length} new series are ready to be imported into Sonarr.`);
                 }
@@ -132,7 +149,7 @@ class App {
             console.log();
             const totalImported = items.length - notAdded;
             if (totalImported) {
-                console.log(`${totalImported} was successfully imported to Sonarr`);
+                console.log(`${totalImported} series were successfully imported to Sonarr`);
             }
             else if (notAdded) {
                 console.log('Something went wrong when adding. Please try again with verbose.');
