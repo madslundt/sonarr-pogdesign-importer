@@ -89,8 +89,7 @@ class App {
                 return series;
             }
             const localSeries = yield res.json();
-            const localSeriesTvdbId = localSeries.map(s => s.tvdbId);
-            const result = series.filter(item => !localSeriesTvdbId.some(local => local === item.tvdbId));
+            const result = series.filter(item => !localSeries || !localSeries.length || !localSeries.some(local => local.tvdbId === item.tvdbId));
             return result;
         });
     }
@@ -105,10 +104,14 @@ class App {
             if (scrapedItems.length > 0) {
                 let items = yield this.lookupLocal(scrapedItems);
                 if (this.config.verbose && scrapedItems.length > items.length) {
-                    console.log(`\n${scrapedItems.length - items.length}/${scrapedItems.length} series already exists in Sonarr.`);
+                    console.log(`${scrapedItems.length - items.length}/${scrapedItems.length} series already exists in Sonarr.`);
                 }
-                if (this.config.verbose) {
-                    console.log(`\n${items.length} new series are ready to be imported into Sonarr.`);
+                if (!items.length) {
+                    console.log('\nNothing new to add to Sonarr');
+                    process.exit(0);
+                }
+                else if (this.config.verbose) {
+                    console.log(`${items.length} new series are ready to be imported into Sonarr.`);
                 }
                 if (this.config.genresIgnored && this.config.genresIgnored.length) {
                     if (this.config.verbose) {
@@ -122,7 +125,7 @@ class App {
                 yield this.addSeries(items);
             }
             else {
-                console.log('Nothing new to add to Sonarr');
+                console.log('\nNothing new to add to Sonarr');
             }
         });
     }
