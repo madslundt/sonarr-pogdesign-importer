@@ -3,8 +3,6 @@ About
 Scrape tv series from either Pogdesign and/or Trakt and import them into Sonarr based on ratings and genre. Pogdesign rating is how many users have selected the tv show. Trakt rating is the rating from 0-100.
 When the tv series have been found from Trakt and/or Pogdesign it is being looked up in Sonarr and based on the genre from Sonarr it is imported into Sonarr for later download.
 
-[![NPM](https://nodei.co/npm/sonarr-pogdesign-importer.png?compact=true)](https://nodei.co/npm/sonarr-pogdesign-importer/)
-
 Install
 =======
 `npm i -g sonarr-pogdesign-importer`
