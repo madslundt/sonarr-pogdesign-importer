@@ -12,6 +12,7 @@ const node_fetch_1 = require("node-fetch");
 class Trakt {
     constructor(config, verbose = false) {
         this.URL = 'https://api.trakt.tv/shows/';
+        this.URL_ALL = 'https://api.trakt.tv/calendars/all/shows/';
         this.MAX_RATING = 100;
         this.VERSION = '2';
         this.DEFAULT_TO_YEAR_OFFSET = 10;
@@ -33,11 +34,13 @@ class Trakt {
         if (!config.listName.length) {
             throw 'listName needs to be specified';
         }
-        if (config.fromYear && config.toYear && config.toYear < config.fromYear) {
-            throw 'toYear must be greater or equal to fromYear';
-        }
-        if (config.minimumRating < 0 || config.minimumRating > 100) {
-            throw 'minimumRating must be between 0 and 100';
+        if (this.config.listName.toLocaleLowerCase() !== 'new') {
+            if (config.fromYear && config.toYear && config.toYear < config.fromYear) {
+                throw 'toYear must be greater or equal to fromYear';
+            }
+            if (config.minimumRating < 0 || config.minimumRating > 100) {
+                throw 'minimumRating must be between 0 and 100';
+            }
         }
     }
     getItems(shows) {
@@ -62,11 +65,17 @@ class Trakt {
         });
     }
     getTitles() {
-        const years = `${this.config.fromYear}-${this.config.toYear}`;
-        const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
-        const url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
-        if (this.verbose) {
-            console.log(`Fetching Trakt between ${years} and ratings between ${ratings}`);
+        let url = "";
+        if (this.config.listName.toLocaleLowerCase() === 'new') {
+            url = `${this.URL_ALL}new`;
+        }
+        else {
+            const years = `${this.config.fromYear}-${this.config.toYear}`;
+            const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
+            url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
+            if (this.verbose) {
+                console.log(`Fetching Trakt between ${years} and ratings between ${ratings}`);
+            }
         }
         return node_fetch_1.default(url, {
             headers: {

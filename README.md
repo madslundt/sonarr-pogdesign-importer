@@ -81,13 +81,13 @@ There are no limit on how many scraper configurations you fill in, as long as th
 #### Trakt
 **apiKey**: Your own api key for Trakt.
 
-**listName**: List that you want to crawl from on Trakt. Can be either `trending`, `popular`,`watched`, `collected` or `anticipated`
+**listName**: List that you want to crawl from on Trakt. Can be either `trending`, `popular`,`watched`, `collected`, `anticipated` or `new`.
 
-**minimumRating**: Minimum rating for a show to be imported to Sonarr. Must be between 0 and 100.
+**minimumRating**: Minimum rating for a show to be imported to Sonarr. Must be between 0 and 100. Minimum rating is ignored when having list name set to `new`.
 
-**startYear**: Start year for a show to be released after. If this is not specified it will look from current year.
+**startYear**: Start year for a show to be released after. If this is not specified it will look from current year. Start year is ignored when having list name set to `new`.
 
-**endYear** End year for a show to be released within. If this is not specified it will be set to 10 years ahead of current year.
+**endYear** End year for a show to be released within. If this is not specified it will be set to 10 years ahead of current year. End year is ignored when having list name set to `new`.
 
 
 
@@ -95,5 +95,5 @@ Run from source
 ===============
 1. Clone this repository.
 2. Create config.json file
-3. Change files in /src and transpile them to js by using the command `tsc` (you need to have tsc installed globally `npm i -g tsc`)
+3. Change files in /src and transpile them to js by using the command `tsc` (you need to have tsc installed globally `npm i -g typescript`)
 4. Go to /dist and run `node index --config="[CONFIG PATH]"` or `node index -c "[CONFIG PATH]"`

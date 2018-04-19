@@ -8,6 +8,7 @@ class Trakt implements IScraper {
     private readonly verbose: boolean;
 
     private readonly URL: string = 'https://api.trakt.tv/shows/';
+    private readonly URL_ALL: string = 'https://api.trakt.tv/calendars/all/shows/';
     private readonly MAX_RATING: number = 100;
     private readonly VERSION: string = '2';
     private readonly DEFAULT_TO_YEAR_OFFSET: number = 10;
@@ -33,12 +34,14 @@ class Trakt implements IScraper {
         if (!config.apiKey.length) { throw 'apiKey needs to be specified'; }
         if (!config.listName.length) { throw 'listName needs to be specified'; }
 
-        if (config.fromYear && config.toYear && config.toYear < config.fromYear) {
-            throw 'toYear must be greater or equal to fromYear';
-        }
+        if (this.config.listName.toLocaleLowerCase() !== 'new') {
+            if (config.fromYear && config.toYear && config.toYear < config.fromYear) {
+                throw 'toYear must be greater or equal to fromYear';
+            }
 
-        if (config.minimumRating < 0 || config.minimumRating > 100) {
-            throw 'minimumRating must be between 0 and 100';
+            if (config.minimumRating < 0 || config.minimumRating > 100) {
+                throw 'minimumRating must be between 0 and 100';
+            }
         }
     }
 
@@ -68,13 +71,19 @@ class Trakt implements IScraper {
     }
 
     private getTitles() {
-        const years = `${this.config.fromYear}-${this.config.toYear}`;
-        const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
-        const url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
+        let url: string = "";
+        if (this.config.listName.toLocaleLowerCase() === 'new') {
+            url = `${this.URL_ALL}new`;
+        } else {
+            const years = `${this.config.fromYear}-${this.config.toYear}`;
+            const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
+            url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
 
-        if (this.verbose) {
-            console.log(`Fetching Trakt between ${years} and ratings between ${ratings}`);
+            if (this.verbose) {
+                console.log(`Fetching Trakt between ${years} and ratings between ${ratings}`);
+            }
         }
+
 
         return fetch(url, {
             headers: {
