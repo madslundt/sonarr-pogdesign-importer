@@ -66,6 +66,7 @@ class Trakt {
     }
     getTitles() {
         let url = "";
+        let extra = "";
         if (this.config.listName.toLocaleLowerCase() === 'new') {
             url = `${this.URL_ALL}new`;
         }
@@ -73,9 +74,10 @@ class Trakt {
             const years = `${this.config.fromYear}-${this.config.toYear}`;
             const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
             url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
-            if (this.verbose) {
-                console.log(`Fetching Trakt between ${years} and ratings between ${ratings}`);
-            }
+            extra = `between ${years} and ratings between ${ratings}`;
+        }
+        if (this.verbose) {
+            console.log(`Fetching Trakt list ${this.config.listName} ${extra}`);
         }
         return node_fetch_1.default(url, {
             headers: {

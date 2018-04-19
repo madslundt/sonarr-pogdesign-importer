@@ -72,6 +72,8 @@ class Trakt implements IScraper {
 
     private getTitles() {
         let url: string = "";
+        let extra: string = "";
+
         if (this.config.listName.toLocaleLowerCase() === 'new') {
             url = `${this.URL_ALL}new`;
         } else {
@@ -79,9 +81,11 @@ class Trakt implements IScraper {
             const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
             url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
 
-            if (this.verbose) {
-                console.log(`Fetching Trakt between ${years} and ratings between ${ratings}`);
-            }
+            extra = `between ${years} and ratings between ${ratings}`;
+        }
+
+        if (this.verbose) {
+            console.log(`Fetching Trakt list ${this.config.listName} ${extra}`);
         }
 
 
