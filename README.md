@@ -92,9 +92,9 @@ There are no limit on how many scraper configurations you fill in, as long as th
 
 **endYear** End year for a show to be released within. If this is not specified it will be set to 10 years ahead of current year. End year is ignored when having list name set to `new`.
 
-**countries** List of country codes you want only want to include. Example: `["us", "ca", "gb"]`.
+**countries** List of country codes you only want to include. Example: `["us", "ca", "gb"]`.
 
-**languages** List of languages you want only want to include. Example: `["en"]`.
+**languages** List of languages you only want to include. Example: `["en"]`.
 
 **statuses** List of statuses you only want to include. Can be one or more of `returning series`, `in production`, `planned`, `canceled` or `ended`.
 
