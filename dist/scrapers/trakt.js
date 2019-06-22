@@ -17,7 +17,7 @@ class Trakt {
         this.VERSION = '2';
         this.DEFAULT_TO_YEAR_OFFSET = 10;
         this.PAGE_LIMIT = 100;
-        this.VALID_STATUS = ["returning series", "in production", "planned", "canceled", "ended"];
+        this.VALID_STATUSES = ["returning series", "in production", "planned", "canceled", "ended"];
         this.config = config;
         this.verbose = verbose;
         if (!this.config.fromYear) {
@@ -42,8 +42,8 @@ class Trakt {
             if (config.minimumRating < 0 || config.minimumRating > 100) {
                 throw 'minimumRating must be between 0 and 100';
             }
-            if (config.status && config.status.some(status => this.VALID_STATUS.indexOf(status) == -1)) {
-                throw `status must be an array of one or more of these [${this.VALID_STATUS.join(', ')}`;
+            if (config.statuses && config.statuses.some(status => this.VALID_STATUSES.indexOf(status) == -1)) {
+                throw `status must be an array of one or more of these [${this.VALID_STATUSES.join(', ')}`;
             }
         }
     }
@@ -94,9 +94,9 @@ class Trakt {
                 path += "&networks=" + this.config.networks.join();
                 extra += `, networks in [${this.config.networks.join(", ")}]`;
             }
-            if (this.config.status && this.config.status.length > 0) {
-                path += "&status=" + this.config.status.join();
-                extra += `, status in [${this.config.status.join(", ")}]`;
+            if (this.config.statuses && this.config.statuses.length > 0) {
+                path += "&status=" + this.config.statuses.join();
+                extra += `, status in [${this.config.statuses.join(", ")}]`;
             }
             url = `${this.URL}${this.config.listName.toLocaleLowerCase()}${path}&limit=${this.PAGE_LIMIT}`;
         }

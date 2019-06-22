@@ -119,6 +119,18 @@ class App {
                     }
                     items = this.filterCategories(items);
                 }
+                if (this.config.networksExactIgnored && this.config.networksExactIgnored.length) {
+                    if (this.config.verbose) {
+                        console.log();
+                    }
+                    items = this.filterExactNetworks(items);
+                }
+                if (this.config.networksContainIgnored && this.config.networksContainIgnored.length) {
+                    if (this.config.verbose) {
+                        console.log();
+                    }
+                    items = this.filterContainsNetworks(items);
+                }
                 if (this.config.verbose) {
                     console.log();
                 }
@@ -173,7 +185,39 @@ class App {
         });
         console.log();
         if (this.config.verbose) {
-            console.log(`${items.length - result.length} series were skipped.`);
+            console.log(`${items.length - result.length} series were skipped because of ignored genres.`);
+        }
+        return result;
+    }
+    filterExactNetworks(items) {
+        const ignoredNetworks = this.config.networksExactIgnored.map(network => network.toLocaleLowerCase());
+        const result = items.filter(item => {
+            const itemNetwork = item.network.toLocaleLowerCase();
+            const isOk = !ignoredNetworks.includes(itemNetwork);
+            if (!isOk && this.config.verbose) {
+                console.log(`${item.title} skipped because the network is not exact match.`);
+            }
+            return isOk;
+        });
+        console.log();
+        if (this.config.verbose) {
+            console.log(`${items.length - result.length} series were skipped because of exact match to ignored networks.`);
+        }
+        return result;
+    }
+    filterContainsNetworks(items) {
+        const ignoredNetworks = this.config.networksContainIgnored.map(network => network.toLocaleLowerCase());
+        const result = items.filter(item => {
+            const itemNetwork = item.network.toLocaleLowerCase();
+            const isOk = ignoredNetworks.findIndex((ignoredNetwork) => itemNetwork.includes(ignoredNetwork)) === -1;
+            if (!isOk && this.config.verbose) {
+                console.log(`${item.title} skipped because the network is not contained match.`);
+            }
+            return isOk;
+        });
+        console.log();
+        if (this.config.verbose) {
+            console.log(`${items.length - result.length} series were skipped because they contained match to ignored networks.`);
         }
         return result;
     }

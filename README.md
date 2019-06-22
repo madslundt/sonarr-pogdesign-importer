@@ -21,6 +21,8 @@ Create a config.json file some where with the following content:
 ```
 {
     "genresIgnored": ["comedy", "documentary"],
+    "networksExactIgnored": ["the cw"],
+    "networksContainIgnored": ["kids", "disney", "pbs", "teen", "nick"],
     "sonarr": {
         "url": "http://localhost:8989",
         "apiKey": "abcdef12345",
@@ -52,6 +54,10 @@ Create a config.json file some where with the following content:
 ```
 
 **genresIgnored**: Genres to be ignored. If a series contain one of the genres in the list it is not imported to Sonarr.
+
+**networksExactIgnored**: Networks to be ignored. If a series exactly contain one of the networks (case insensitive) in the list it is not imported to Sonarr. Example: "disney channel" only matches "Disney Channel" and not others as in below.
+
+**networksContainIgnored**: Networks to be ignored. If a series contain one of the networks names (case insensitive) in the list it is not imported to Sonarr. Example: "disney" matches ["Disney Channel, Disney Junior, Disney XD, Disney+, etc"].
 
 **verbose**: If you want to include verbose. Can be ignored.
 
