@@ -40,7 +40,10 @@ Create a config.json file some where with the following content:
             "listName": "trending",
             "minimumRating": 70,
             "fromYear": 2018,
-            "toYear": 2020
+            "toYear": 2020,
+            "countries": ["us", "ca", "uk"],
+            "languages": ["en"],
+            "statuses": ["returning series", "in production", "planned"]
         }
     ],
     "verbose": false,
@@ -89,7 +92,48 @@ There are no limit on how many scraper configurations you fill in, as long as th
 
 **endYear** End year for a show to be released within. If this is not specified it will be set to 10 years ahead of current year. End year is ignored when having list name set to `new`.
 
+**countries** List of country codes you want only want to include. Example: `["us", "ca", "gb"]`.
 
+**languages** List of languages you want only want to include. Example: `["en"]`.
+
+**statuses** List of statuses you only want to include. Can be one or more of `returning series`, `in production`, `planned`, `canceled` or `ended`.
+
+**networks** List of networks you only want to include. Example: `["HBO", "NBC", "CBS"]`.
+
+#### Trakt Data Lookup
+
+**To view all supported counties:**
+(replace client_id with your api key)
+
+```
+curl --include \
+     --header "Content-Type: application/json" \
+     --header "trakt-api-version: 2" \
+     --header "trakt-api-key: [client_id]" \
+  'https://api.trakt.tv/countries/shows'
+```
+
+**To view all supported languages:**
+(replace client_id with your api key)
+
+```
+curl --include \
+     --header "Content-Type: application/json" \
+     --header "trakt-api-version: 2" \
+     --header "trakt-api-key: [client_id]" \
+  'https://api.trakt.tv/languages/shows'
+```
+
+**To view all supported networks**
+(replace client_id with your api key)
+
+```
+curl --include \
+     --header "Content-Type: application/json" \
+     --header "trakt-api-version: 2" \
+     --header "trakt-api-key: [client_id]" \
+  'https://api.trakt.tv/networks'
+```
 
 Run from source
 ===============
