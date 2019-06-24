@@ -10,6 +10,10 @@ export interface ITraktConfig {
     minimumRating: number,
     fromYear?: number,
     toYear?: number,
+    countries?: string[],
+    languages?: string[],
+    networks?: string[],
+    statuses?: string[],
 }
 
 export interface IPogDesignConfig {

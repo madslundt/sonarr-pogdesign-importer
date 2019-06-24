@@ -2,6 +2,8 @@ import { ITraktConfig, IPogDesignConfig, ScraperType } from "./scraper";
 
 export interface IConfig {
     genresIgnored: string[],
+    networksExactIgnored: string[],
+    networksContainIgnored: string[],
     sonarr: {
         url: string,
         apiKey: string,

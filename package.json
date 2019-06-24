@@ -2,7 +2,13 @@
   "name": "sonarr-pogdesign-importer",
   "version": "0.5.2",
   "description": "Import tv series from pogdesign and/or trakt into sonarr",
-  "keywords": ["sonarr", "trakt", "pogdesign", "tv", "series"],
+  "keywords": [
+    "sonarr",
+    "trakt",
+    "pogdesign",
+    "tv",
+    "series"
+  ],
   "author": "Mads Engel Lundt <madslundt@live.dk>",
   "main": "dist/index.js",
   "bin": {

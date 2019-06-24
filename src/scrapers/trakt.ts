@@ -13,6 +13,7 @@ class Trakt implements IScraper {
     private readonly VERSION: string = '2';
     private readonly DEFAULT_TO_YEAR_OFFSET: number = 10;
     private readonly PAGE_LIMIT: number = 100;
+    private readonly VALID_STATUSES: string[] = ["returning series", "in production", "planned", "canceled", "ended"];
 
 
     constructor(config: ITraktConfig, verbose: boolean = false) {
@@ -42,11 +43,18 @@ class Trakt implements IScraper {
             if (config.minimumRating < 0 || config.minimumRating > 100) {
                 throw 'minimumRating must be between 0 and 100';
             }
+
+            if (config.statuses && config.statuses.some(status => this.VALID_STATUSES.indexOf(status) == -1)) {
+                throw `status must be an array of one or more of these [${this.VALID_STATUSES.join(', ')}`;
+            }
         }
     }
 
     private getItems(shows: ITraktShow[]) {
         const result = shows.map(show => {
+            if (this.verbose) {
+                console.log(`Checking ${show.title || show.show.title} (${show.year || show.show.year})`);
+            }
             return <IItem>{
                 title: show.title || show.show.title,
                 year: show.year || show.show.year,
@@ -77,14 +85,37 @@ class Trakt implements IScraper {
         if (this.config.listName.toLocaleLowerCase() === 'new') {
             url = `${this.URL_ALL}new`;
         } else {
-            const years = `${this.config.fromYear}-${this.config.toYear}`;
-            const ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
-            url = `${this.URL}${this.config.listName.toLocaleLowerCase()}?years=${years}&ratings=${ratings}&limit=${this.PAGE_LIMIT}`;
+            let years = `${this.config.fromYear}-${this.config.toYear}`;
+            let ratings = `${this.config.minimumRating}-${this.MAX_RATING}`;
 
-            extra = `between ${years} and ratings between ${ratings}`;
+            extra = `between ${years}, ratings between ${ratings}`;
+            let path = `?years=${years}&ratings=${ratings}`;
+
+            if (this.config.countries && this.config.countries.length > 0) {
+                path += "&countries=" + this.config.countries.join();
+                extra += `, countries in [${this.config.countries.join(", ")}]`;
+            }
+
+            if (this.config.languages && this.config.languages.length > 0) {
+                path += "&languages=" + this.config.languages.join();
+                extra += `, languages in [${this.config.languages.join(", ")}]`;
+            }
+
+            if (this.config.networks && this.config.networks.length > 0) {
+                path += "&networks=" + this.config.networks.join();
+                extra += `, networks in [${this.config.networks.join(", ")}]`;
+            }
+
+            if (this.config.statuses && this.config.statuses.length > 0) {
+                path += "&status=" + this.config.statuses.join();
+                extra += `, status in [${this.config.statuses.join(", ")}]`;
+            }
+
+            url = `${this.URL}${this.config.listName.toLocaleLowerCase()}${path}&limit=${this.PAGE_LIMIT}`;
         }
 
         if (this.verbose) {
+            console.log(`Fetching Trakt url ${url}`);
             console.log(`Fetching Trakt list ${this.config.listName} ${extra}`);
         }
 
