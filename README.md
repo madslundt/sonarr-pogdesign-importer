@@ -94,7 +94,7 @@ There are no limit on how many scraper configurations you fill in, as long as th
 
 **minimumRating**: Minimum rating for a show to be imported to Sonarr. Must be between 0 and 100. Minimum rating is ignored when having list name set to `new`.
 
-**startYear**: Start year for a show to be released after. If this is not specified it will look from current year. Start year is ignored when having list name set to `new`.
+**fromYear**: Start year for a show to be released after. If this is not specified it will look from current year. Start year is ignored when having list name set to `new`.
 
 **endYear** End year for a show to be released within. If this is not specified it will be set to 10 years ahead of current year. End year is ignored when having list name set to `new`.
 
